@@ -8,7 +8,6 @@
 #include "serial.c"
 #include "rotary.c"
 
-
 //------------------------------MAIN------------------------------------
 int main(void)
 {	
@@ -17,11 +16,13 @@ int main(void)
 	DDRC = 0xff;			//LCDdaten
 	DDRA = 0xf0;			//LCDctrl & ADC
 
-	unsigned char output[16];
+	unsigned char Output[16];
+	unsigned char output = 0;
+	unsigned long cntr = 0;
 	unsigned char x = 0;
 	//volatile unsigned long i = 0;
 
-	//initialiting USART and SPI
+	//initialiting USART
 	USART_Init(103);
 
 	USART_Transmit_STRING("\n\rStartup complete");
@@ -32,22 +33,43 @@ int main(void)
 	{
 		usrInput(PIND);
 //----------OUTPUT---------------------
-		
-		sprintf(output, "%c", USART_Receive());
 
-		USART_Transmit_STRING("\n\rRX");
+		cntr++;
 
-		lcd_gotoxy(x, 0);
-		lcd_puts(output);
-		
-		if((x >= 0) && (x <= 15))
-		{			
-			x++;
-		}
-		else
+		sprintf(Output, "\n\r%d", cntr);
+		USART_Transmit_STRING(Output);
+
+		if(USART_check_RX())
 		{
-			lcd_clrscr();
-			x = 0;
+			cntr = 0;
+			output = USART_Receive();
+			
+			if((x >= 0) && (x <= 15))
+			{
+				if(output == '\b')
+				{
+					x--;
+					lcd_gotoxy(x, 0);
+					lcd_putc(' ');
+				}
+				else if(output == '\r')
+				{
+					x = 0;
+					lcd_clrscr();
+				}
+				else
+				{
+					lcd_gotoxy(x, 0);
+					lcd_putc(output);
+					
+					x++;
+				}
+			}
+			else
+			{
+				lcd_clrscr();
+				x = 0;
+			}
 		}
 		
 //------------------------------------------
