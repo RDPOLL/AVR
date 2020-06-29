@@ -24,7 +24,7 @@ int main(void)
 	//initialiting USART
 	USART_Init(103);
 
-	USART_Transmit_STRING("\n\rStartup complete");
+	USART_Transmit_STRING("\n\rStartup completed");
 
 	lcd_init(LCD_DISP_ON);  	//Initialisieren
 	
