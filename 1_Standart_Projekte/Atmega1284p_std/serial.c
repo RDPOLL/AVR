@@ -70,7 +70,7 @@ unsigned char USART_Receive_STRING(unsigned char *st)
 	}
 	
 	st[digit] = '\0';			//add NULL termination
-	return st;
+	return (int)st;
 }
 
 //============= SPI =======================
