@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
+//#include <string.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -17,9 +18,8 @@ int main(void)
 	DDRA = 0xf0;			//LCDctrl & ADC
 
 	unsigned char Output[16];
-	unsigned char output = 0;
+	//unsigned char output = 0;
 	unsigned long cntr = 0;
-	unsigned char x = 0;
 	//volatile unsigned long i = 0;
 
 	//initialiting USART
@@ -31,51 +31,16 @@ int main(void)
 	
 	while(1)
 	{
-		usrInput(PIND);
 //----------OUTPUT---------------------
 
-		//USART_Receive_STRING(Output);
+		USART_Receive_STRING(Output);
+	
+		lcd_gotoxy(0, 0);
+		lcd_puts(Output);
 
-		cntr++;
-
-		sprintf(Output, "\n\r%d", cntr);
-		USART_Transmit_STRING(Output);
-
-		if(USART_check_RX())
-		{
-			cntr = 0;
-			output = USART_Receive();
-			
-			if((x >= 0) && (x <= 15))
-			{
-				if(output == '\b')
-				{
-					x--;
-					lcd_gotoxy(x, 0);
-					lcd_putc(' ');
-				}
-				else if(output == '\r')
-				{
-					x = 0;
-					lcd_clrscr();
-				}
-				else
-				{
-					lcd_gotoxy(x, 0);
-					lcd_putc(output);
+		if(((strcmp(Output, "clear")) == 0))
+			lcd_clrscr();
 					
-					x++;
-				}
-			}
-			else
-			{
-				lcd_clrscr();
-				x = 0;
-			}
-		}
-
-		_delay_ms(50);	//for VT420
-
 //------------------------------------------
 	}//end of while
 }//end of main
