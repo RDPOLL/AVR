@@ -40,7 +40,7 @@ int main(void)
 		{
 			lcd_gotoxy(0, 0);
 			lcd_puts(Output);
-		}	
+		}
 //------------------------------------------
 	}//end of while
 }//end of main
