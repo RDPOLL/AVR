@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
-//#include <string.h>
+#include <string.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -19,7 +19,6 @@ int main(void)
 
 	unsigned char Output[16];
 	//unsigned char output = 0;
-	unsigned long cntr = 0;
 	//volatile unsigned long i = 0;
 
 	//initialiting USART
