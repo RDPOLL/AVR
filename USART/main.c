@@ -71,7 +71,8 @@ int main(void)
 				x = 0;
 			}
 		}
-		
+
+		_delay_ms(50);	//for VT420
 //------------------------------------------
 	}//end of while
 }//end of main

@@ -7,23 +7,7 @@
 #include <avr/io.h>
 
 //USART RX max laenge
-#define SLAENG
-
-//Debug output
-#define DEBUG 0
-
-//Prints the function and the line in the UART
-#if DEBUG
-	#define dbg_print()	printf_P(PSTR("%s:%d\n\r"),__FUNCTION__,__LINE__)
-#else
-	#define dbg_print()
-#endif
-
-
-//Die folgende Zeile muss in der Main funktion aufgerufen werden.
-//Moeglichst direkt zu beginn unter der PORT initialisierung.
-//	stdout = &uart_str;
-
+#define SLAENG 80
 
 	//Datasheet s.197 for example baud
 	//@16mHz: baud = 103 for: 9600
@@ -74,52 +58,20 @@ unsigned char USART_Receive(void)
 	/* Get and return received data from buffer */
 	return UDR0;
 }
-/*
-unsigned char USART_Receive_STRING(unsigned char *zeiger)
-{
-	unsigned char anz = 0;
 
-	while(1)
+unsigned char USART_Receive_STRING(unsigned char *st)
+{
+	unsigned char c = 0;
+	unsigned char digit = 0;
+
+	while((digit < SLAENG) && ((c = USART_Receive()) != '\r'))
 	{
-		*zeiger = USART_Receive();
-		
-		if(((*zeiger) >= 0x20) && (anz < SLAENG))
-		{
-			USART_Transmit(*zeiger);
-			anz++;
-			zeiger++;
-		}
-		else
-		{
-			if((*zeiger != '\b') || (anz >= SLAENG))
-			{
-				anz = *zeiger;
-				*zeiger = 0;
-				return anz;
-			}
-			else
-			{
-				if((*zeiger == '\b') && (anz != 0))
-				{
-					zeiger--;
-					USART_Transmit('\b');
-					USART_Transmit(' ');
-					USART_Transmit('\b');
-					anz--;
-				}
-			}
-		}
+		st[digit++] = c;		//add char to string
 	}
+	
+	st[digit] = '\0';			//add NULL termination
+	return st;
 }
-*/
-
-int uart_putchar(char c, FILE *stream)
-{
-	USART_Transmit(c);
-	return 0;
-}
-
-FILE uart_str = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 
 //============= SPI =======================
 
@@ -127,8 +79,10 @@ void SPI_MasterInit(unsigned char lsbFist)
 {
 	/* Set MOSI, SCK and SS output, all others input */
 	DDRB |= (1<<PB5)|(1<<PB7)|(1<<PB4);
+	
 	/* Enable SPI, Master, set clock rate fck/16 */
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	
 	/* if direction is set LSB first, else MSB first */
 	if(lsbFist) SPCR |= (1<<DORD);
 	else SPCR &= ~(1<<DORD);
@@ -139,8 +93,10 @@ void SPI_MasterTransmit(unsigned char cData, unsigned char doubleSpeed)
 	/* Set Double Speed mode */
 	if(doubleSpeed) SPSR |= (1<<SPI2X);
 	else SPSR &= ~(1<<SPI2X);
+	
 	/* Start transmission */
 	SPDR = cData;
+	
 	/* Wait for transmission complete */
 	//for(i = 160; i > 0; i--);
 	while(!(SPSR & (1<<SPIF)));
@@ -155,6 +111,7 @@ void SPI_SlaveInit(void)
 {
 	/* Set MISO output, all others input */
 	PORTB = (1<<PB6);
+	
 	/* Enable SPI */
 	SPCR = (1<<SPE);
 }
@@ -162,6 +119,7 @@ char SPI_SlaveReceive(void)
 {
 	/* Wait for reception complete */
 	while(!(SPSR & (1<<SPIF)));
+	
 	/* Return Data Register */
 	return SPDR;
 }
