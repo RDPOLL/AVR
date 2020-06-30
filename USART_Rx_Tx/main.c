@@ -34,13 +34,14 @@ int main(void)
 
 		USART_Receive_STRING(Output);
 	
-		if(((strcmp(Output, "clear")) == 0))
+		if((strcmp(Output, "clear")) == 0)
 			lcd_clrscr();
 		else
 		{
 			lcd_gotoxy(0, 0);
 			lcd_puts(Output);
 		}
+		
 //------------------------------------------
 	}//end of while
 }//end of main
