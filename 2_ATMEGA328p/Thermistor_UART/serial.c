@@ -16,7 +16,8 @@
 	//@16mHz: baud = 0 for: 1M
 void USART_Init( unsigned int baud )
 {
-	//DDRD |= 0x00;
+	DDRD |= 0x02;
+	
 	/*Set baud rate */
 	UBRR0H = (unsigned char)(baud>>8);
 	UBRR0L = (unsigned char)baud;

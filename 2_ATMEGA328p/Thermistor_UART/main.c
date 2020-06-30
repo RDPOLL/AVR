@@ -7,11 +7,13 @@
 #include "serial.c"
 #include "adc.c"
 
+
 /*
 * Die NTC Tabelle, bestehend aus 1024 Temperaturstützpunkten.
 * Einheit:0.1 °C
 * 12k PullDown Resistor
 */
+//NICHT IM RAM SPEICHERN!!!!!!!!!!
 short NTC_table[1024] = {
   -852, -808, -764, -731, -705, -683, -664, 
   -647, -633, -619, -607, -595, -584, -574, 
@@ -138,7 +140,7 @@ short NTC_table[1024] = {
  
 short NTC_ADC2Temperature(unsigned short adc_value){
  
-  /* Werte direkt aus der Tabelle lesen. */
+  //Werte direkt aus der Tabelle lesen.
   return NTC_table[adc_value];
 };
 
@@ -159,16 +161,12 @@ int main(void)
 	
 	while(1)
 	{
-/*
+
 		Temp = NTC_ADC2Temperature(read_ADC(0));
 	
 		sprintf(Output, "\n\r%04d", Temp);
 
 		USART_Transmit_STRING(Output);
-*/
-
-		USART_Transmit('L');
-		USART_Transmit_STRING("Lucas");
 
 //------------------------------------------
 	}//end of while
