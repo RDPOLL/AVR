@@ -10,6 +10,7 @@
 #define SLAENG 80
 
 	//Datasheet s.197 for example baud
+	//internal RC ocillator: baud = 47 for: 9600
 	//@16mHz: baud = 103 for: 9600
 	//@16mHz: baud = 3 for: 256K
 	//@16mHz: baud = 0 for: 1M

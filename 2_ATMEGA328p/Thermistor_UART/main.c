@@ -150,7 +150,7 @@ int main(void)
 	
 	DDRC = 0x00;
 	DDRB = 0xFF;
-	DDRD = 0x00;
+	DDRD = 0x02;
 
 	ADC_init(0x01);
 	USART_Init(47);
