@@ -4,17 +4,20 @@
 #define F_CPU 8000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include "serial.c"
 #include "adc.c"
 
+#define PULS 500UL			//PULS in MS
+#define PERIODE 1000UL		//Periode in MS
 
 /*
 * Die NTC Tabelle, bestehend aus 1024 Temperaturstützpunkten.
-* Einheit:0.1 °C
+* Einheit: 0.1 °C
 * 12k PullDown Resistor
 */
-//NICHT IM RAM SPEICHERN!!!!!!!!!!
-short NTC_table[1024] = {
+short NTC_table[1024] PROGMEM =
+{
   -852, -808, -764, -731, -705, -683, -664, 
   -647, -633, -619, -607, -595, -584, -574, 
   -565, -556, -548, -540, -532, -525, -518, 
@@ -138,18 +141,17 @@ short NTC_table[1024] = {
   3463, 4336, 5209
 };
  
-short NTC_ADC2Temperature(unsigned short adc_value){
- 
+short NTC_ADC2Temperature(unsigned short adc_value)
+{
   //Werte direkt aus der Tabelle lesen.
-  return NTC_table[adc_value];
+  return pgm_read_word(&(NTC_table[adc_value]));
 };
 
 //------------------------------MAIN------------------------------------
 int main(void)
 {
 	unsigned char Output[10];
-	unsigned short Temp = 0;
-	
+		
 	DDRC = 0x00;
 	DDRB = 0xFF;
 	DDRD = 0x02;
@@ -161,13 +163,14 @@ int main(void)
 	
 	while(1)
 	{
+				
+		sprintf(Output, "\n\rTemperatur:%02dC", (NTC_ADC2Temperature(read_ADC(0)) / 10));
 
-		Temp = NTC_ADC2Temperature(read_ADC(0));
-	
-		sprintf(Output, "\n\r%04d", Temp);
-
+		//für Temperatursensor (Nur  Temperatur auf 0.1C genau 25.6C = 256)
+		//sprintf(Output, "%d\r", NTC_ADC2Temperature(read_ADC(0)));
+		
 		USART_Transmit_STRING(Output);
-
+			
 //------------------------------------------
 	}//end of while
 }//end of main
