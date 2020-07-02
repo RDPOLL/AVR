@@ -151,23 +151,39 @@ short NTC_ADC2Temperature(unsigned short adc_value)
 int main(void)
 {
 	unsigned char Output[10];
+	unsigned short temp = 0;
+	unsigned char i = 0;
 		
 	DDRC = 0x00;
 	DDRB = 0xFF;
 	DDRD = 0x02;
 
 	ADC_init(0x01);
-	USART_Init(47);
+	USART_Init(51);
 
 	PORTB |= (1<<PB6);
 	
 	while(1)
 	{
-				
-		sprintf(Output, "\n\rTemperatur:%02dC", (NTC_ADC2Temperature(read_ADC(0)) / 10));
+		temp = read_ADC(0);
 
+		//Transmit ADC value via SPI (LSB First)
+		for(i = 0; i < 10; i++)
+		{
+			//Signal PB6
+			if(temp & (1<<i))
+				PORTB |= (1<<PB6);
+			else
+				PORTB &= ~(1<<PB6);
+
+			//Clock PB7
+			PORTB |= (1<<PB7);
+			_delay_us(10);
+			PORTB &= ~(1<<PB7);
+		}
+		
 		//für Temperatursensor (Nur  Temperatur auf 0.1C genau 25.6C = 256)
-		//sprintf(Output, "%d\r", NTC_ADC2Temperature(read_ADC(0)));
+		sprintf(Output, "%03d\r", NTC_ADC2Temperature(temp));
 		
 		USART_Transmit_STRING(Output);
 			
