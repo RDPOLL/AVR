@@ -167,25 +167,28 @@ int main(void)
 	{
 		temp = read_ADC(0);
 
+		//für Temperatursensor (Nur  Temperatur auf 0.1C genau 25.6C = 256)
+		sprintf(Output, "%03d\r", NTC_ADC2Temperature(temp));
+		
+		USART_Transmit_STRING(Output);
+
 		//Transmit ADC value via SPI (LSB First)
 		for(i = 0; i < 10; i++)
 		{
 			//Signal PB6
-			if(temp & (1<<i))
+			if(temp & 0x80)
 				PORTB |= (1<<PB6);
 			else
 				PORTB &= ~(1<<PB6);
 
+			temp <<= 1;
+			
 			//Clock PB7
 			PORTB |= (1<<PB7);
 			_delay_us(10);
 			PORTB &= ~(1<<PB7);
 		}
-		
-		//für Temperatursensor (Nur  Temperatur auf 0.1C genau 25.6C = 256)
-		sprintf(Output, "%03d\r", NTC_ADC2Temperature(temp));
-		
-		USART_Transmit_STRING(Output);
+		PORTB |= (1<<PB6);	//led anschalten
 			
 //------------------------------------------
 	}//end of while

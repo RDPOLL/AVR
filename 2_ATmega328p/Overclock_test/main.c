@@ -3,9 +3,10 @@
 #include <avr/io.h>
 #define F_CPU 8000000UL
 #include <util/delay.h>
-//#include <avr/interrupt.h>
-#include "serial.c"
 
+/*
+ *	Der Test hat bis 38MHz funktioniert. Allerdings nicht zuverlässig.
+ */
 
 //------------------------------MAIN------------------------------------
 int main(void)

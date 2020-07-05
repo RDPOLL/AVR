@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
+#include <string.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -16,6 +17,7 @@ int main(void)
 	unsigned char String[16];
 	short temperature = 0;
 	unsigned char tempKomma = 0;
+	unsigned char sign = 0;
 	
 	DDRD = 0x02;			//Schalterport
 	DDRB = 0xff;			//LEDsport
@@ -32,19 +34,20 @@ int main(void)
 			USART_Receive_STRING(Input);
 			temperature = atoi(Input);
 
-			if(temperature > 0)
+			if(temperature >= 0)
 			{
 				tempKomma = temperature % 10;
 				temperature /= 10;
+				sign = '+';
 			}
 			else
 			{
 				temperature *= -1;
 				tempKomma = temperature % 10;
 				temperature /=  10;
-				temperature *= -1;
+				sign = '-';
 			}
-			sprintf(String, "%03d,%01dC", temperature, tempKomma);
+			sprintf(String, "%c%02d,%01dC", sign, temperature, tempKomma);
 			
 			lcd_gotoxy(0, 0);
 			lcd_puts(String);
