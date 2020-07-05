@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
-#define F_CPU 8000000UL
+#define F_CPU 38000000UL
 #include <util/delay.h>
 
 /*
