@@ -5,7 +5,7 @@
 #include <util/delay.h>
 
 /*
- *	Der Test hat bis 38MHz funktioniert. Allerdings nicht zuverlässig.
+ *	Der Test hat bis 38MHz funktioniert. Allerdings nicht zuverlässig. 
  */
 
 //------------------------------MAIN------------------------------------
