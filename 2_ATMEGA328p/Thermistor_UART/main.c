@@ -176,7 +176,7 @@ int main(void)
 		for(i = 0; i < 10; i++)
 		{
 			//Signal PB6
-			if(temp & 0x80)
+			if(temp & 0x200)
 				PORTB |= (1<<PB6);
 			else
 				PORTB &= ~(1<<PB6);
