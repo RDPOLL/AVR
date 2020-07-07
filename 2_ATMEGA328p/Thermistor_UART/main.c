@@ -172,7 +172,7 @@ int main(void)
 		
 		USART_Transmit_STRING(Output);
 
-		//Transmit ADC value via SPI (LSB First)
+		//Transmit ADC value via SPI (MSB First)
 		for(i = 0; i < 10; i++)
 		{
 			//Signal PB6
@@ -185,7 +185,7 @@ int main(void)
 			
 			//Clock PB7
 			PORTB |= (1<<PB7);
-			_delay_us(10);
+			//_delay_us(10);
 			PORTB &= ~(1<<PB7);
 		}
 		PORTB |= (1<<PB6);	//led anschalten

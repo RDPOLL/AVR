@@ -18,19 +18,20 @@ int main(void)
 	short temperature = 0;
 	unsigned char tempKomma = 0;
 	unsigned char sign = 0;
+	unsigned short blinkCntr = 0;
 	
 	DDRD = 0x02;			//Schalterport
 	DDRB = 0xff;			//LEDsport
 	DDRC = 0xff;			//LCDdaten
 	DDRA = 0xf0;			//LCDctrl & ADC
 
-	lcd_init(LCD_DISP_ON);  	//Initialisieren
+	lcd_init(LCD_DISP_ON);
 	USART_Init(103);
 	
 	while(1)
 	{
 		if(USART_check_RX())
-		{	
+		{
 			USART_Receive_STRING(Input);
 			temperature = atoi(Input);
 
@@ -39,8 +40,7 @@ int main(void)
 				tempKomma = temperature % 10;
 				temperature /= 10;
 				sign = '+';
-			}
-			else
+			}else
 			{
 				temperature *= -1;
 				tempKomma = temperature % 10;
@@ -51,6 +51,14 @@ int main(void)
 			
 			lcd_gotoxy(0, 0);
 			lcd_puts(String);
+			
+			//Empfangstest
+			blinkCntr++;
+			if(blinkCntr >= 100)
+			{
+				blinkCntr = 0;
+				PORTB ^= 1;
+			}
 		}
 //------------------------------------------
 	}//end of while
