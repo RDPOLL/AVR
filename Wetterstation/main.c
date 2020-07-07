@@ -47,7 +47,7 @@ int main(void)
 				temperature /=  10;
 				sign = '-';
 			}
-			sprintf(String, "%c%02d,%01dC", sign, temperature, tempKomma);
+			sprintf(String, "%c%03d,%01dC         ", sign, temperature, tempKomma);
 			
 			lcd_gotoxy(0, 0);
 			lcd_puts(String);

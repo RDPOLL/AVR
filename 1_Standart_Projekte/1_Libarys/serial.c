@@ -19,7 +19,7 @@ void USART_Init( unsigned int baud )
 	UBRR0 = (unsigned int)baud;
 
 	/* 	Rx output, Tx input (USART0) */
-	DDRB |= 0x02;
+	DDRD |= 0x02;
 	
 	/* Enable receiver and transmitter */
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
