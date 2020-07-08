@@ -7,6 +7,7 @@
 #include <avr/pgmspace.h>
 #include "serial.c"
 #include "adc.c"
+#include "hc12.c"
 
 #define PULS 500UL			//PULS in MS
 #define PERIODE 1000UL		//Periode in MS
@@ -160,8 +161,7 @@ int main(void)
 
 	ADC_init(0x01);
 	USART_Init(51);
-
-	PORTB |= (1<<PB6);
+	HC_init(96,1,1);
 	
 	while(1)
 	{
@@ -172,7 +172,7 @@ int main(void)
 		
 		USART_Transmit_STRING(Output);
 
-		//Transmit ADC value via SPI (MSB First)
+/*		//Transmit ADC value via SPI (MSB First)
 		for(i = 0; i < 10; i++)
 		{
 			//Signal PB6
@@ -189,7 +189,9 @@ int main(void)
 			PORTB &= ~(1<<PB7);
 		}
 		PORTB |= (1<<PB6);	//led anschalten
-			
+*/
+
+		_delay_ms(2000);
 //------------------------------------------
 	}//end of while
 }//end of main

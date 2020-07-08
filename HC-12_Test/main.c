@@ -18,23 +18,20 @@ int main(void)
 	DDRC = 0xff;			//LCDdaten
 	DDRA = 0xf0;			//LCDctrl & ADC
 
-	unsigned char input[10];
+	//unsigned char input[10];
 	//unsigned char output = 0;
 	//volatile unsigned long i = 0;
-
+ 
 	//initialiting USART
 	USART_Init(103);
 
 	lcd_init(LCD_DISP_ON);  	//Initialisieren
 
-	HC_setBaud(9600);
-	
-	HC_setChannel(10);
+	HC_init(96,1,1);
 	
 	while(1)
 	{
-
-
+		
 //------------------------------------------
 	}//end of while
 }//end of main

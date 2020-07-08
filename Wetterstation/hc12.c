@@ -14,7 +14,7 @@
 #include <avr/io.h>
 
 #define SETPORT PORTB		//PORT of HC-12 SET
-#define SETPIN PB0			//Pin of HC-12 SET
+#define SETPIN PB1			//Pin of HC-12 SET
 
 
 //Send instruction to HC-12

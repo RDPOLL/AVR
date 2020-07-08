@@ -8,7 +8,7 @@
 #include "lcd.h"
 #include "serial.c"
 #include "rotary.c"
-
+#include "hc12.c"
 
 //------------------------------MAIN------------------------------------
 int main(void)
@@ -18,7 +18,6 @@ int main(void)
 	short temperature = 0;
 	unsigned char tempKomma = 0;
 	unsigned char sign = 0;
-	unsigned short blinkCntr = 0;
 	
 	DDRD = 0x02;			//Schalterport
 	DDRB = 0xff;			//LEDsport
@@ -27,6 +26,7 @@ int main(void)
 
 	lcd_init(LCD_DISP_ON);
 	USART_Init(103);
+	HC_init(96,1,8);
 	
 	while(1)
 	{
@@ -53,12 +53,8 @@ int main(void)
 			lcd_puts(String);
 			
 			//Empfangstest
-			blinkCntr++;
-			if(blinkCntr >= 100)
-			{
-				blinkCntr = 0;
-				PORTB ^= 1;
-			}
+			PORTB ^= 1;
+
 		}
 //------------------------------------------
 	}//end of while
