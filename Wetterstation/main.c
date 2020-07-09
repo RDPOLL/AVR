@@ -53,7 +53,9 @@ int main(void)
 			lcd_puts(String);
 			
 			//Empfangstest
-			PORTB ^= 1;
+			PORTB |= (1<<PB0);
+			_delay_ms(100);
+			PORTB &= ~(1<<PB0);
 
 		}
 //------------------------------------------

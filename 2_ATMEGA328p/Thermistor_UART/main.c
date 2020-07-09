@@ -1,16 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
-#define F_CPU 8000000UL
+#define F_CPU 1000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "serial.c"
 #include "adc.c"
 #include "hc12.c"
-
-#define PULS 500UL			//PULS in MS
-#define PERIODE 1000UL		//Periode in MS
 
 /*
 * Die NTC Tabelle, bestehend aus 1024 Temperaturstützpunkten.
@@ -160,7 +157,8 @@ int main(void)
 	DDRD = 0x02;
 
 	ADC_init(0x01);
-	USART_Init(51);
+	USART_Init(12);
+	UCSR0A |= (1<<U2X0);
 	
 	_delay_ms(100);
 	HC_setPower(1);
@@ -174,26 +172,7 @@ int main(void)
 		
 		USART_Transmit_STRING(Output);
 
-/*		//Transmit ADC value via SPI (MSB First)
-		for(i = 0; i < 10; i++)
-		{
-			//Signal PB6
-			if(temp & 0x200)
-				PORTB |= (1<<PB6);
-			else
-				PORTB &= ~(1<<PB6);
-
-			temp <<= 1;
-			
-			//Clock PB7
-			PORTB |= (1<<PB7);
-			//_delay_us(10);
-			PORTB &= ~(1<<PB7);
-		}
-		PORTB |= (1<<PB6);	//led anschalten
-*/
-
-		_delay_ms(1000);
+		_delay_ms(5000);
 //------------------------------------------
 	}//end of while
 }//end of main
