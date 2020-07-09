@@ -26,7 +26,7 @@ int main(void)
 
 	lcd_init(LCD_DISP_ON);
 	USART_Init(103);
-	HC_init(96,1,8);
+	HC_init(96,1,1);
 	
 	while(1)
 	{

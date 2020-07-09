@@ -161,7 +161,9 @@ int main(void)
 
 	ADC_init(0x01);
 	USART_Init(51);
-	HC_init(96,1,1);
+	
+	_delay_ms(100);
+	HC_setPower(1);
 	
 	while(1)
 	{
@@ -191,7 +193,7 @@ int main(void)
 		PORTB |= (1<<PB6);	//led anschalten
 */
 
-		_delay_ms(2000);
+		_delay_ms(1000);
 //------------------------------------------
 	}//end of while
 }//end of main
