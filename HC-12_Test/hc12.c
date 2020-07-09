@@ -21,12 +21,12 @@
 void HC_sendCommand(unsigned char hcCommandS[15])
 {	
 	SETPORT &= ~(1<<SETPIN);
-	_delay_us(100);
+	_delay_ms(40);
 	
 	USART_Transmit_STRING(hcCommandS);
 
 	SETPORT |= (1<<SETPIN);
-	_delay_ms(100);
+	_delay_ms(200);
 }
 
 //reset all settings to default
@@ -77,7 +77,7 @@ void HC_setPower(unsigned char hcPowerOut)
 	HC_sendCommand(hcPowerOutS);
 }
 
-//change between the tree modes (datasheet)
+//change between the four modes (datasheet)
 void HC_setMode(unsigned char hcMode)
 {
 	unsigned char hcModeS[8];
