@@ -54,7 +54,7 @@ int main(void)
 			
 			//Empfangstest
 			PORTB |= (1<<PB0);
-			_delay_ms(100);
+			_delay_ms(10);
 			PORTB &= ~(1<<PB0);
 
 		}
