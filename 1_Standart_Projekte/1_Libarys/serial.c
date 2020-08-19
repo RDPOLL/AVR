@@ -73,6 +73,12 @@ unsigned char USART_Receive_STRING(unsigned char *st)
 	return (int)st;
 }
 
+void USART_Flush(void)
+{
+	unsigned char dummy;
+	while(UCSR0A & (1<<RXC0)) dummy = UDR0;
+}
+
 //============= SPI =======================
 
 void SPI_MasterInit(unsigned char lsbFist)

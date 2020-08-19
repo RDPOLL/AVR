@@ -26,7 +26,10 @@ int main(void)
 
 	lcd_init(LCD_DISP_ON);
 	USART_Init(103);
+	
 	HC_init(96,1,1);
+
+	USART_Flush();
 	
 	while(1)
 	{
@@ -47,7 +50,7 @@ int main(void)
 				temperature /=  10;
 				sign = '-';
 			}
-			sprintf(String, "%c%03d,%01dC         ", sign, temperature, tempKomma);
+			sprintf(String, "%c%03d,%01dC", sign, temperature, tempKomma);
 			
 			lcd_gotoxy(0, 0);
 			lcd_puts(String);

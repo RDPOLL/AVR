@@ -1,5 +1,5 @@
 /*	Dies ist eine Libary zum komunizieren durch den Seriellenschnittstellen
- *	des ATMEGA328P.
+ *	des ATMEGA1284p.
  */
 
 #include <stdlib.h>
@@ -10,17 +10,16 @@
 #define SLAENG 80
 
 	//Datasheet s.197 for example baud
-	//internal RC ocillator: baud = 47 for: 9600
 	//@16mHz: baud = 103 for: 9600
 	//@16mHz: baud = 3 for: 256K
 	//@16mHz: baud = 0 for: 1M
 void USART_Init( unsigned int baud )
 {
+	/* Set baud rate */
+	UBRR0 = (unsigned int)baud;
+
+	/* 	Rx output, Tx input (USART0) */
 	DDRD |= 0x02;
-	
-	/*Set baud rate */
-	UBRR0H = (unsigned char)(baud>>8);
-	UBRR0L = (unsigned char)baud;
 	
 	/* Enable receiver and transmitter */
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
@@ -51,11 +50,11 @@ void USART_Transmit_STRING(unsigned char *data)
     while(*data != 0) USART_Transmit(*data++);
 }
 
-unsigned char USART_Receive( void )
-{
+unsigned char USART_Receive(void)
+{	
 	/* Wait for data to be received */
-	while ( !(UCSR0A & (1<<RXC0)) )
-	;
+	while( !(UCSR0A & (1<<RXC0)) );
+	
 	/* Get and return received data from buffer */
 	return UDR0;
 }
@@ -72,6 +71,12 @@ unsigned char USART_Receive_STRING(unsigned char *st)
 	
 	st[digit] = '\0';			//add NULL termination
 	return (int)st;
+}
+
+void USART_Flush(void)
+{
+	unsigned char dummy;
+	while(UCSR0A & (1<<RXC0)) dummy = UDR0;
 }
 
 //============= SPI =======================

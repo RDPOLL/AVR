@@ -19,7 +19,7 @@ void USART_Init( unsigned int baud )
 	UBRR0 = (unsigned int)baud;
 
 	/* 	Rx output, Tx input (USART0) */
-	DDRB |= 0x02;
+	DDRD |= 0x02;
 	
 	/* Enable receiver and transmitter */
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
@@ -71,6 +71,12 @@ unsigned char USART_Receive_STRING(unsigned char *st)
 	
 	st[digit] = '\0';			//add NULL termination
 	return (int)st;
+}
+
+void USART_Flush(void)
+{
+	unsigned char dummy;
+	while(UCSR0A & (1<<RXC0)) dummy = UDR0;
 }
 
 //============= SPI =======================
