@@ -10,6 +10,8 @@
 #include "adc.c"
 
 unsigned char sine = 0;
+unsigned char freq = 0;
+unsigned char comp = 0;
 
 unsigned char sine_wave[256] =
 {
@@ -49,8 +51,12 @@ unsigned char sine_wave[256] =
 
 ISR(TIMER1_OVF_vect)
 {
-	OCR1A = sine_wave[sine++];
-	if(sine > 256) sine = 0;
+	if(freq++ >= comp)
+	{
+		freq = 0;
+		OCR1A = sine_wave[sine += 4];
+		if(sine > 256) sine = 0;
+	}
 }
 
 //------------------------------MAIN------------------------------------
@@ -80,6 +86,9 @@ int main(void)
 
 	while(1)
 	{
-		
+		usrInput(PIND);
+
+		if(rotary.left) comp--;
+		if(rotary.right) comp++;
 	}
 }//end of main
