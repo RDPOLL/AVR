@@ -30,7 +30,7 @@ int main(void)
 		if(USART_check_RX)
 			USART_Receive_STRING(Input);
 		
-		sscanf(Input, "$GPRMC,%d,%c,%f,%c,%f,%f,%*d,,,%*s", &time,&flag,&x,&xf,&y,&yf,speed,&course);
+		sscanf(Input,"$GPRMC,%d,%c,%f,%c,%f,%f,%*d,,,%*s", &time,&flag,&x,&xf,&y,&yf,speed,&course);
 
 		sprintf(Output, "%d, %d",time, speed);
 		lcd_gotoxy(0,0);
