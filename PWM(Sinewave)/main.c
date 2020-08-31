@@ -54,7 +54,7 @@ ISR(TIMER1_OVF_vect)
 	if(freq++ >= comp)
 	{
 		freq = 0;
-		OCR1A = sine_wave[sine += 4];
+		OCR1A = sine_wave[sine += 1];
 		if(sine > 256) sine = 0;
 	}
 }
