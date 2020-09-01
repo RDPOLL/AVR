@@ -16,13 +16,11 @@ int main(void)
 	
 	while(1)
 	{
-		moveRover(FORWARD, 50, FORWARD, 50);
-		_delay_ms(3000);
-		moveRover(BACKWARD, 50, FORWARD, 50);
+		moveRover(FORWARD, 255, FORWARD, 255);
+		_delay_ms(5000);
+		moveRover(FORWARD, 255,BACKWARD, 255);
 		_delay_ms(1000);
-		moveRover(FORWARD, 50, FORWARD, 50);
+		moveRover(BACKWARD, 255,FORWARD, 255);
 		_delay_ms(3000);
-		moveRover(FORWARD, 50, BACKWARD, 50);
-		_delay_ms(1000);
 	}//end of while
 }//end of main

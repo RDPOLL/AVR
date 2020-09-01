@@ -6,8 +6,8 @@
 #define DIRRPIN	PB0
 #define DIRLPIN PB1
 
-#define FORWARD 0
-#define BACKWARD 1
+#define FORWARD 1
+#define BACKWARD 0
 #define SPEEDRIGHT OCR0A
 #define SPEEDLEFT OCR0B
 
