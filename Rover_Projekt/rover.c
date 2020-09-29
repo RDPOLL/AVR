@@ -60,10 +60,10 @@ void rover_stop(void)
 
 void rover_turn_left(unsigned char speedRoverL)
 {
-	rover_move(BACKWARD, speedRoverL, FORWARD, speedRoverL);
+	rover_move(FORWARD, speedRoverL, BACKWARD, speedRoverL);
 }
 
 void rover_turn_right(unsigned char speedRoverR)
 {
-	rover_move(FORWARD, speedRoverR, BACKWARD, speedRoverR);
+	rover_move(BACKWARD, speedRoverR, FORWARD, speedRoverR);
 }

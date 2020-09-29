@@ -12,27 +12,30 @@
 //------------------------------MAIN------------------------------------
 int main(void)
 {
-	char Input[80];
-	char Output[20];
-	long x, y, speed, course;
-	long time, flag, xf, yf, ret;
+	char Input[50];
+	char Output[16];
+	short speed, time;
 	
 	DDRD = 0x02;			//Schalterport
 	DDRB = 0xff;			//LEDsport
 	DDRC = 0xff;			//LCDdaten
 	DDRA = 0xf0;			//LCDctrl & ADC
 
+	_delay_ms(500);
+
 	lcd_init(LCD_DISP_ON);  	//Initialisieren
-	USART_Init(109);
+	USART_Init(103);
 	
 	while(1)
 	{
-		if(USART_check_RX)
-			USART_Receive_STRING(Input);
+		PORTB = PIND;
 		
-		sscanf(Input,"$GPRMC,%d,%c,%f,%c,%f,%f,%*d,,,%*s", &time,&flag,&x,&xf,&y,&yf,speed,&course);
+		USART_Receive_STRING(Input);
+			
+		sscanf(Input,"$GPRMC,%4d,,,,,,%d", &time, &speed);
 
-		sprintf(Output, "%d, %d",time, speed);
+		sprintf(Output, "%d, %03d", (time + 200), speed);
+		
 		lcd_gotoxy(0,0);
 		lcd_puts(Output);
 //------------------------------------------

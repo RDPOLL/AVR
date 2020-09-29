@@ -34,8 +34,6 @@ int main(void)
 		usrInput(PIND);
 //----------OUTPUT---------------------
 
-		//USART_Receive_STRING(Output);
-
 		cntr++;
 
 		sprintf(Output, "\n\r%d", cntr);
@@ -74,7 +72,7 @@ int main(void)
 			}
 		}
 
-		_delay_ms(50);	//for VT420
+		_delay_ms(5000);	//for VT420
 
 //------------------------------------------
 	}//end of while

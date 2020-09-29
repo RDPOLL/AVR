@@ -12,23 +12,27 @@
 //------------------------------MAIN------------------------------------
 int main(void)
 {
-	unsigned char i = 0;
+	//unsigned char i = 0;
 	
 	lcd_init(LCD_DISP_ON);
 	rover_init();
 	
 	while(1)
 	{
-		for(i = 0; i < 255; i++)
-		{
-			rover_straight(FORWARD, i);
-			_delay_ms(30);
-		}
-		 
 		rover_stop();
-		_delay_ms(2000);
 		
-		rover_straight(BACKWARD, MAXSPEED);
-		_delay_ms(5000);
+		while(PIND & (1<<PD0))
+		{
+			if(PIND & (1<<PD5))
+				rover_straight(FORWARD, MAXSPEED);
+			else if(PIND & (1<<PD6))
+				rover_straight(BACKWARD, MAXSPEED);
+			else if(PIND & (1<<PD7))
+				rover_turn_right(MAXSPEED);
+			else if(PIND & (1<<PD4))
+				rover_turn_left(MAXSPEED);
+			else
+				rover_stop();
+		}
 	}//end of while
 }//end of main
