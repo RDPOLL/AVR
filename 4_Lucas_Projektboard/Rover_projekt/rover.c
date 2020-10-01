@@ -131,7 +131,7 @@ void rover_init(void)
 	EIMSK |= (1<<INT0) | (1<<INT1);
 }
 
-//Use FORWARD and BACKWARD to controll direchtion.
+//Use FORWARD and BACKWARD to controll direction.
 void rover_move(unsigned char dirLeft, unsigned char speedLeft, unsigned char dirRight, unsigned char speedRight)
 {
 	extern unsigned char roverSetSpeedR;
