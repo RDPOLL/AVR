@@ -18,7 +18,7 @@ unsigned char roverDirR = 0;
 unsigned char roverDirL = 0;
 
 
-ISR(TIMER0_OVF_vect)
+ISR(TIMER1_OVF_vect)
 {
 	unsigned short measSpeedR = 0;
 	unsigned short measSpeedL = 0;
