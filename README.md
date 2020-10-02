@@ -1,3 +1,3 @@
-# AVR_PIONEER
+# AVR
 
-Evaluations Board AVR PIONEER Code.
+This is the code to all my avr projects.
