@@ -29,6 +29,7 @@
 
 unsigned char scanOnOff = 0;
 unsigned short sense[17];
+unsigned char scanDir = 0;
 
 
 //Rover var
@@ -124,32 +125,46 @@ ISR(INT2_vect)
 	scanOnOff ^= 1;
 }
 
-void scanObstical(void)
+unsigned short scanObstical(void)
 {
 	unsigned short dist = 0;
+	unsigned short obstical = 0;
 	unsigned short i = 0;
-	
-	_delay_ms(100);
 
-	for(i = 0; i < 17; i++)
+//=====================================
+//scanning
+	if(scanDir)
 	{
-		OCR1B = (i + 14);
+		for(i = 0; i < 17; i++)
+		{
+			OCR1B = (i + 14);
 
-		_delay_ms(50);
+			_delay_ms(30);
 
-		dist = readDistance();
+			dist = readDistance();
 
-		sense[i] = dist;
+			sense[i] = dist;
+		}
+		scanDir = 0;
+	}
+	else
+	{
+		for(i = 17; i > 0; i--)
+		{
+			OCR1B = (i + 14);
+
+			_delay_ms(30);
+
+			dist = readDistance();
+
+			sense[i] = dist;
+		}
+		scanDir = 1;
 	}
 
-	OCR1B = 14;
-}
+//=================================================
+//Readout
 
-unsigned short calObstical(void)
-{
-	unsigned short obstical = 0;
-	unsigned char i = 0;
-	
 	for(i = 1; i < 15; i++)
 	{
 		if(sense[i] <= MINDIST)
@@ -194,7 +209,7 @@ int main(void)
 
 	USART_Init(103);
 	
-	HC_init(96, 1, 1);
+	HC_setPower(1);
 	
 	rover_init();
 
@@ -218,8 +233,8 @@ int main(void)
 
 		if(scanOnOff)
 		{
-			scanObstical();
-			obsTmp = calObstical();
+			
+			obsTmp = scanObstical();
 
 			if(obsTmp & (1<<8))
 			{
@@ -256,7 +271,6 @@ int main(void)
 			if(sense[8] < MINDIST)
 			{
 				rover_stop();
-				rover_turn_right(speed);
 			}
 			else
 			{
@@ -268,6 +282,8 @@ int main(void)
 			lcd_puts(output);
 
 			sprintf(output, "Distance: %03d   ", sense[8]);
+			USART_Transmit_STRING(output);
+			USART_Transmit_STRING("\n\r");
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 		}
