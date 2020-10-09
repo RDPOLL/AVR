@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
+#include <avr/sleep.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "adc.c"
 #include "lcd.h"
 #include "rotary.c"
 #include "rover.c"
@@ -177,30 +179,32 @@ int main(void)
 
 	PORTB = 0x07;
 
-	//PWM init
-	TCCR1A |= (1<<COM1B1) | (1<<WGM10);					//PWM initialisierung 8bit
-	TCCR1B |= (1<<WGM12) | (1<<CS12) | (1<<CS10);		//Datenblatt: s.131
-	TIMSK1 |= (1<<TOIE1);
+	//PWM output B init
+	TCCR1A |= (1<<COM1B1);
+	//set servo to 50%
 	OCR1B = 23;
 
 	//ext interupts settings
 	EICRA |= (1<<ISC21);
 	EIMSK |= (1<<INT2);
 	
-	//Lib Initialisieren
+//Lib Initialisieren
 	lcd_init(LCD_DISP_ON);  	
 	PORTC |= (1<<PC7);
 
 	USART_Init(103);
+	
 	HC_init(96, 1, 1);
+
+	ADC_init(0x04);
 	
 	rover_init();
 
 	usound_init();
-	//-------------------
+//-------------------
 	
 	while(1)
-	{
+	{		
 		usrInput(PINB);
 
 		//Setting the Speed
@@ -212,10 +216,6 @@ int main(void)
 		{
 			speed--;
 		}
-
-		sprintf(output, "Speed: %03d", speed);
-		lcd_gotoxy(0,1);
-		lcd_puts(output);
 
 
 		if(scanOnOff)
@@ -255,10 +255,9 @@ int main(void)
 			OCR1B = 23;
 			sense[8] = readDistance();
 
-			if(sense[8] <= MINDIST)
-				rover_stop();
-			else if(sense[8] >= (MINDIST + 2))
-				rover_straight(FORWARD, speed);
+			sprintf(output, "Speed: %03d", speed);
+			lcd_gotoxy(0,1);
+			lcd_puts(output);
 
 			sprintf(output, "Distance: %03d   ", sense[8]);
 			lcd_gotoxy(0,0);

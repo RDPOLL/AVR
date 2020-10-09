@@ -5,4 +5,4 @@ main.sx = Assambler file
 Wird mit "assemble" Kompiliert
 und mit "progAsm" auf den uP geschriben.
 
-main.c ist das Assembler Beispile aber in C geschrieben.
+main.c ist das Assembler Beispiele aber in C geschrieben.

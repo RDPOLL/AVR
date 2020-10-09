@@ -109,22 +109,24 @@ ISR(INT1_vect)
 #define BACKWARD 0
 
 
-//initialize for rover use. For more detail read datasheet of mC.
+//initialize for rover use. For more detail read datasheet of uC.
 void rover_init(void)
 {
 	//configure outputs
 	DDRB |= (1<<DIRRPIN) | (1<<DIRLPIN) | (1<<SPEEDRIGHTPIN) | (1<<SPEEDLEFTPIN);
 
 	//pwm settings
-	TCCR0A |= (1<<COM0A1) | (1<<COM0B1);
-	TCCR0A |= (1<<WGM00);
+	TCCR0A |= (1<<COM0A1) | (1<<COM0B1) | (1<<WGM00);
+	TCCR1A |= (1<<WGM10);
+	TCCR1B |= (1<<WGM12);
 
 	//Set pwm speed
 	TCCR0B |= (1<<CS00);
+	TCCR1B |= (1<<CS12) | (1<<CS10);
 
 	//enable overflow interupt
 	sei();
-	//TIMSK0 |= (1<<TOIE0);
+	TIMSK1 |= (1<<TOIE1);
 
 	//ext interupts settings
 	EICRA |= (1<<ISC00) | (1<<ISC10);
