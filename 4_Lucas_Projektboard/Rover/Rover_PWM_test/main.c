@@ -53,7 +53,7 @@ int main(void)
 			speed = 0;
 		}
 		
-		rover_straight(BACKWARD, speed);
+		rover_straight(FORWARD, speed);
 	
 		sprintf(output, "Speed: %03d", speed);
 		lcd_gotoxy(0,0);

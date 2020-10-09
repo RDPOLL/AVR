@@ -94,7 +94,7 @@ ISR(TIMER1_OVF_vect)
 	else
 	{
 		PORTB &= ~(1<<DIRRPIN);
-		SPEEDRIGHT = roverVarSpeedR;
+		SPEEDRIGHT = (255 - roverVarSpeedR);
 	}
 
 	if(roverDirL)
@@ -105,7 +105,7 @@ ISR(TIMER1_OVF_vect)
 	else
 	{
 		PORTB &= ~(1<<DIRLPIN);
-		SPEEDLEFT = roverVarSpeedL;
+		SPEEDLEFT = (255 - roverVarSpeedL);
 	}
 }
 
@@ -195,8 +195,6 @@ int main(void)
 	USART_Init(103);
 	
 	HC_init(96, 1, 1);
-
-	ADC_init(0x04);
 	
 	rover_init();
 
@@ -240,12 +238,12 @@ int main(void)
 				rover_straight(FORWARD, speed);
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsTmp >> 8)));
-			USART_Transmit_STRING(output);
+			//USART_Transmit_STRING(output);
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsTmp));
-			USART_Transmit_STRING(output);
+			//USART_Transmit_STRING(output);
 			USART_Transmit_STRING("\n\r");
 			lcd_gotoxy(8,0);
 			lcd_puts(output);
@@ -254,6 +252,16 @@ int main(void)
 		{
 			OCR1B = 23;
 			sense[8] = readDistance();
+
+			if(sense[8] < MINDIST)
+			{
+				rover_stop();
+				rover_turn_right(speed);
+			}
+			else
+			{
+				rover_straight(FORWARD, speed);
+			}
 
 			sprintf(output, "Speed: %03d", speed);
 			lcd_gotoxy(0,1);
