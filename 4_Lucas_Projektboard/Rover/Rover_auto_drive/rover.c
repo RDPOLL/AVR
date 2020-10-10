@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <avr/io.h>
 
-//To use this Libary you need to copy this section to your Main.c document.
+//To use this Libary you need to copy this section to your main.c document.
 /*
-
+//Rover var
 unsigned short extInt0Cntr = 0;
 unsigned short extInt1Cntr = 0;
 
@@ -67,7 +67,7 @@ ISR(TIMER1_OVF_vect)
 	else
 	{
 		PORTB &= ~(1<<DIRRPIN);
-		SPEEDRIGHT = roverVarSpeedR;
+		SPEEDRIGHT = (255 - roverVarSpeedR);
 	}
 
 	if(roverDirL)
@@ -78,7 +78,7 @@ ISR(TIMER1_OVF_vect)
 	else
 	{
 		PORTB &= ~(1<<DIRLPIN);
-		SPEEDLEFT = roverVarSpeedL;
+		SPEEDLEFT = (255 - roverVarSpeedL);
 	}
 }
 
@@ -109,6 +109,42 @@ ISR(INT1_vect)
 #define BACKWARD 0
 
 
+//Use FORWARD and BACKWARD to controll direction.
+void rover_move(unsigned char dirLeft, unsigned char speedLeft, unsigned char dirRight, unsigned char speedRight)
+{
+	extern volatile unsigned char roverSetSpeedR;
+	extern volatile unsigned char roverSetSpeedL;
+
+	extern volatile unsigned char roverDirR;
+	extern volatile unsigned char roverDirL;
+	
+	roverSetSpeedL = speedLeft;
+	roverSetSpeedR = speedRight;
+
+	roverDirL = dirLeft;
+	roverDirR = dirRight;
+}
+
+void rover_straight(unsigned char dirRover, unsigned char speedRover)
+{
+	rover_move(dirRover, speedRover, dirRover, speedRover);
+}
+
+void rover_stop(void)
+{
+	rover_move(BACKWARD, 0, BACKWARD, 0);
+}
+
+void rover_turn_left(unsigned char speedRoverL)
+{
+	rover_move(BACKWARD, speedRoverL, FORWARD, speedRoverL);
+}
+
+void rover_turn_right(unsigned char speedRoverR)
+{
+	rover_move(FORWARD, speedRoverR, BACKWARD, speedRoverR);
+}
+
 //initialize for rover use. For more detail read datasheet of uC.
 void rover_init(void)
 {
@@ -131,40 +167,6 @@ void rover_init(void)
 	//ext interupts settings
 	EICRA |= (1<<ISC00) | (1<<ISC10);
 	EIMSK |= (1<<INT0) | (1<<INT1);
-}
 
-//Use FORWARD and BACKWARD to controll direction.
-void rover_move(unsigned char dirLeft, unsigned char speedLeft, unsigned char dirRight, unsigned char speedRight)
-{
-	extern unsigned char roverSetSpeedR;
-	extern unsigned char roverSetSpeedL;
-
-	extern unsigned char roverDirR;
-	extern unsigned char roverDirL;
-	
-	roverSetSpeedL = speedLeft;
-	roverSetSpeedR = speedRight;
-
-	roverDirL = dirLeft;
-	roverDirR = dirRight;
-}
-
-void rover_straight(unsigned char dirRover, unsigned char speedRover)
-{
-	rover_move(dirRover, speedRover, dirRover, speedRover);
-}
-
-void rover_stop(void)
-{
-	rover_move(FORWARD, 0, FORWARD, 0);
-}
-
-void rover_turn_left(unsigned char speedRoverL)
-{
-	rover_move(BACKWARD, speedRoverL, FORWARD, speedRoverL);
-}
-
-void rover_turn_right(unsigned char speedRoverR)
-{
-	rover_move(FORWARD, speedRoverR, BACKWARD, speedRoverR);
+	rover_stop();
 }

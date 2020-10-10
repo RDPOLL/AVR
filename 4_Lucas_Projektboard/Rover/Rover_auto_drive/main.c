@@ -24,26 +24,27 @@
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0')
 
-#define MINDIST 35
+#define MINDIST ((speed + 5) * 2)
+#define SCANDELAY 60
 
-
+unsigned char scanDir = 0;
 unsigned char scanOnOff = 0;
 unsigned short sense[17];
-unsigned char scanDir = 0;
+unsigned char speed = 0;
 
 
 //Rover var
-unsigned short extInt0Cntr = 0;
-unsigned short extInt1Cntr = 0;
+volatile unsigned short extInt0Cntr = 0;
+volatile unsigned short extInt1Cntr = 0;
 
-unsigned char roverSetSpeedR = 0;
-unsigned char roverSetSpeedL = 0;
+volatile unsigned char roverSetSpeedR = 0;
+volatile unsigned char roverSetSpeedL = 0;
 
-unsigned char roverVarSpeedR = 0;
-unsigned char roverVarSpeedL = 0;
+volatile unsigned char roverVarSpeedR = 0;
+volatile unsigned char roverVarSpeedL = 0;
 
-unsigned char roverDirR = 0;
-unsigned char roverDirL = 0;
+volatile unsigned char roverDirR = 0;
+volatile unsigned char roverDirL = 0;
 
 
 ISR(TIMER1_OVF_vect)
@@ -139,7 +140,7 @@ unsigned short scanObstical(void)
 		{
 			OCR1B = (i + 14);
 
-			_delay_ms(30);
+			_delay_ms(SCANDELAY);
 
 			dist = readDistance();
 
@@ -153,7 +154,7 @@ unsigned short scanObstical(void)
 		{
 			OCR1B = (i + 14);
 
-			_delay_ms(30);
+			_delay_ms(SCANDELAY);
 
 			dist = readDistance();
 
@@ -182,9 +183,8 @@ unsigned short scanObstical(void)
 //------------------------------MAIN------------------------------------
 int main(void)
 {
-	unsigned short i = 0;
+	//volatile unsigned short i = 0;
 	unsigned short obsTmp = 0;
-	unsigned char speed = 0;
 	char output[16];
 
 	DDRA = 0x00;
@@ -203,15 +203,15 @@ int main(void)
 	EICRA |= (1<<ISC21);
 	EIMSK |= (1<<INT2);
 	
-//Lib Initialisieren
+	//Lib Initialisieren
+	rover_init();
+	
 	lcd_init(LCD_DISP_ON);  	
 	PORTC |= (1<<PC7);
 
 	USART_Init(103);
 	
-	HC_setPower(1);
-	
-	rover_init();
+	HC_init(96, 1, 1);
 
 	usound_init();
 //-------------------
@@ -233,12 +233,10 @@ int main(void)
 
 		if(scanOnOff)
 		{
-			
 			obsTmp = scanObstical();
 
 			if(obsTmp & (1<<8))
 			{
-				rover_stop();
 				rover_turn_right(speed);
 			}
 			else if((obsTmp & (1<<2)) || (obsTmp & (1<<5)))
@@ -250,15 +248,17 @@ int main(void)
 				rover_turn_right(speed);
 			}
 			else
+			{
 				rover_straight(FORWARD, speed);
+			}
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsTmp >> 8)));
-			//USART_Transmit_STRING(output);
+			USART_Transmit_STRING(output);
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsTmp));
-			//USART_Transmit_STRING(output);
+			USART_Transmit_STRING(output);
 			USART_Transmit_STRING("\n\r");
 			lcd_gotoxy(8,0);
 			lcd_puts(output);
