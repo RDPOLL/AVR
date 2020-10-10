@@ -18,7 +18,7 @@ void ADC_init(uint8_t channel)
 	ADCSRA |= (1<<ADEN)|(1<<ADSC);					//Turn on ADC and Do an initial conversion because this one is the slowest and to ensure that everything is up in running-Free running mode
 }
  
-uint16_t read_ADC(uint8_t channel)
+uint16_t ADC_read(uint8_t channel)
 {
 	channel &= 0b00000111;
 	ADMUX &= 0xF0;						//Clear the older channel that was read-i.e MUX0-3 cleared without effecting REFS0-1 ,ADLAR and the reserved bit.

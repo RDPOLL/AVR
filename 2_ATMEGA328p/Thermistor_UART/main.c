@@ -165,7 +165,7 @@ int main(void)
 	
 	while(1)
 	{
-		temp = read_ADC(0);
+		temp = ADC_read(0);
 
 		//für Temperatursensor (Nur  Temperatur auf 0.1C genau 25.6C = 256)
 		sprintf(Output, "%03d\r", NTC_ADC2Temperature(temp));

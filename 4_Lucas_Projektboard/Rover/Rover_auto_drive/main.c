@@ -24,8 +24,9 @@
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0')
 
-#define MINDIST ((speed + 5) * 2)
+#define MINDIST 30
 #define SCANDELAY 60
+#define MINBATTVOLT 7400 //In mV
 
 unsigned char scanDir = 0;
 unsigned char scanOnOff = 0;
@@ -180,12 +181,45 @@ unsigned short scanObstical(void)
 	return obstical;
 }
 
+unsigned short checkBattery(void)
+{
+	unsigned char i = 0;
+	unsigned long battVolt = 0;
+
+	for(i = 0; i < 100; i++)
+	{
+		battVolt += ((long)ADC_read(2) * 10000) / 1023;
+	}
+	battVolt /= 100;
+
+	if((battVolt <= MINBATTVOLT) && (battVolt >= 5500))
+	{
+		rover_stop();
+		OCR1B = 0;
+		HC_goSleep();
+		
+		lcd_gotoxy(0, 0);
+		lcd_puts("BATTERY VOLTAGE!");
+		lcd_gotoxy(0, 1);
+		lcd_puts("!PLEASE CHARGE!");
+		
+		while(1)
+		{
+			PORTC ^= (1<<PC7);
+			_delay_ms(500);
+		}
+	}
+	
+	return battVolt;
+}
 //------------------------------MAIN------------------------------------
 int main(void)
 {
 	//volatile unsigned short i = 0;
-	unsigned short obsTmp = 0;
 	char output[16];
+	unsigned short obsTmp = 0;
+	unsigned short batteryVolt = 0;
+	
 
 	DDRA = 0x00;
 	//DDRB = 0xff;
@@ -213,11 +247,14 @@ int main(void)
 	
 	HC_init(96, 1, 1);
 
+	ADC_init(0x04);
+
 	usound_init();
 //-------------------
 	
 	while(1)
-	{		
+	{
+		batteryVolt = checkBattery();
 		usrInput(PINB);
 
 		//Setting the Speed
@@ -254,13 +291,13 @@ int main(void)
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsTmp >> 8)));
 			USART_Transmit_STRING(output);
-			lcd_gotoxy(0,0);
+			lcd_gotoxy(0,1);
 			lcd_puts(output);
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsTmp));
 			USART_Transmit_STRING(output);
 			USART_Transmit_STRING("\n\r");
-			lcd_gotoxy(8,0);
+			lcd_gotoxy(8,1);
 			lcd_puts(output);
 		}
 		else
@@ -281,13 +318,12 @@ int main(void)
 			lcd_gotoxy(0,1);
 			lcd_puts(output);
 
-			sprintf(output, "Distance: %03d   ", sense[8]);
+			sprintf(output, "%05dmV %03dcm", batteryVolt, sense[8]);
 			USART_Transmit_STRING(output);
 			USART_Transmit_STRING("\n\r");
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 		}
-
 //------------------------------------------
 	}//end of while
 }//end of main

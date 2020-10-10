@@ -94,7 +94,3 @@ void HC_init(short hcBaudInit, char hcChannelInit, char hcPowerOutInit)
 	HC_setChannel(hcChannelInit);
 	HC_setPower(hcPowerOutInit);
 }
-
-
-
-
