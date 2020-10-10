@@ -291,13 +291,13 @@ int main(void)
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsTmp >> 8)));
 			USART_Transmit_STRING(output);
-			lcd_gotoxy(0,1);
+			lcd_gotoxy(0,0);
 			lcd_puts(output);
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsTmp));
 			USART_Transmit_STRING(output);
 			USART_Transmit_STRING("\n\r");
-			lcd_gotoxy(8,1);
+			lcd_gotoxy(8,0);
 			lcd_puts(output);
 		}
 		else
@@ -314,16 +314,16 @@ int main(void)
 				rover_straight(FORWARD, speed);
 			}
 
-			sprintf(output, "Speed: %03d", speed);
-			lcd_gotoxy(0,1);
-			lcd_puts(output);
-
-			sprintf(output, "%05dmV %03dcm", batteryVolt, sense[8]);
-			USART_Transmit_STRING(output);
-			USART_Transmit_STRING("\n\r");
+			sprintf(output, "Speed: %03d      ", speed);
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 		}
+
+		sprintf(output, "%05dmV %03dcm", batteryVolt, sense[8]);
+		USART_Transmit_STRING(output);
+		USART_Transmit_STRING("\n\r");
+		lcd_gotoxy(0,1);
+		lcd_puts(output);
 //------------------------------------------
 	}//end of while
 }//end of main
