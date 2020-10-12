@@ -5,17 +5,17 @@
 //To use this Libary you need to copy this section to your main.c document.
 /*
 //Rover var
-unsigned short extInt0Cntr = 0;
-unsigned short extInt1Cntr = 0;
+volatile unsigned short extInt0Cntr = 0;
+volatile unsigned short extInt1Cntr = 0;
 
-unsigned char roverSetSpeedR = 0;
-unsigned char roverSetSpeedL = 0;
+volatile unsigned char roverSetSpeedR = 0;
+volatile unsigned char roverSetSpeedL = 0;
 
-unsigned char roverVarSpeedR = 0;
-unsigned char roverVarSpeedL = 0;
+volatile unsigned char roverVarSpeedR = 0;
+volatile unsigned char roverVarSpeedL = 0;
 
-unsigned char roverDirR = 0;
-unsigned char roverDirL = 0;
+volatile unsigned char roverDirR = 0;
+volatile unsigned char roverDirL = 0;
 
 
 ISR(TIMER1_OVF_vect)
@@ -36,7 +36,10 @@ ISR(TIMER1_OVF_vect)
 	}
 	else if((measSpeedR < roverSetSpeedR) && (roverVarSpeedR < 255))
 	{
-		roverVarSpeedR++;
+		if(roverVarSpeedR == 0)
+			roverVarSpeedR = INITSTARTSPEED;
+		else
+			roverVarSpeedR++;
 	}
 	else if((measSpeedR > roverSetSpeedR) && (roverVarSpeedR > 0))
 	{
@@ -50,7 +53,10 @@ ISR(TIMER1_OVF_vect)
 	}
 	else if((measSpeedL < roverSetSpeedL) && (roverVarSpeedL < 255))
 	{
-		roverVarSpeedL++;
+		if(roverVarSpeedL == 0)
+			roverVarSpeedL = INITSTARTSPEED;
+		else
+			roverVarSpeedL++;
 	}
 	else if((measSpeedL > roverSetSpeedL) && (roverVarSpeedL > 0))
 	{
@@ -102,6 +108,8 @@ ISR(INT1_vect)
 
 #define SPEEDLEFT OCR0B
 #define SPEEDLEFTPIN PB4
+
+#define INITSTARTSPEED 150
 //------------------
 
 
@@ -135,9 +143,19 @@ void rover_stop(void)
 	rover_move(BACKWARD, 0, BACKWARD, 0);
 }
 
+void rover_turn_left_light(unsigned char speedRoverLL)
+{
+	rover_move(FORWARD, 0, FORWARD, speedRoverLL);
+}
+
 void rover_turn_left(unsigned char speedRoverL)
 {
 	rover_move(BACKWARD, speedRoverL, FORWARD, speedRoverL);
+}
+
+void rover_turn_right_light(unsigned char speedRoverRL)
+{
+	rover_move(FORWARD, speedRoverRL, FORWARD, 0);
 }
 
 void rover_turn_right(unsigned char speedRoverR)

@@ -66,7 +66,10 @@ ISR(TIMER1_OVF_vect)
 	}
 	else if((measSpeedR < roverSetSpeedR) && (roverVarSpeedR < 255))
 	{
-		roverVarSpeedR++;
+		if(roverVarSpeedR == 0)
+			roverVarSpeedR = INITSTARTSPEED;
+		else
+			roverVarSpeedR++;
 	}
 	else if((measSpeedR > roverSetSpeedR) && (roverVarSpeedR > 0))
 	{
@@ -80,7 +83,10 @@ ISR(TIMER1_OVF_vect)
 	}
 	else if((measSpeedL < roverSetSpeedL) && (roverVarSpeedL < 255))
 	{
-		roverVarSpeedL++;
+		if(roverVarSpeedL == 0)
+			roverVarSpeedL = INITSTARTSPEED;
+		else
+			roverVarSpeedL++;
 	}
 	else if((measSpeedL > roverSetSpeedL) && (roverVarSpeedL > 0))
 	{
@@ -197,11 +203,7 @@ unsigned short checkBattery(void)
 		rover_stop();
 		OCR1B = 0;
 		HC_goSleep();
-		
-		lcd_gotoxy(0, 0);
-		lcd_puts("BATTERY VOLTAGE!");
-		lcd_gotoxy(0, 1);
-		lcd_puts("!PLEASE CHARGE!");
+		lcd_clrscr();
 		
 		while(1)
 		{
@@ -216,6 +218,7 @@ unsigned short checkBattery(void)
 int main(void)
 {
 	//volatile unsigned short i = 0;
+	char input[16];
 	char output[16];
 	unsigned short obsTmp = 0;
 	unsigned short batteryVolt = 0;
@@ -257,6 +260,12 @@ int main(void)
 		batteryVolt = checkBattery();
 		usrInput(PINB);
 
+		if(USART_check_RX())
+		{
+			USART_Receive_STRING(input);
+			speed = atoi(input);
+		}
+
 		//Setting the Speed
 		if(rotary.right && (speed < 50))
 		{
@@ -270,24 +279,34 @@ int main(void)
 
 		if(scanOnOff)
 		{
+//********************************************************
 			obsTmp = scanObstical();
 
-			if(obsTmp & (1<<8))
-			{
-				rover_turn_right(speed);
-			}
-			else if((obsTmp & (1<<2)) || (obsTmp & (1<<5)))
+			if((obsTmp & (1<<4)) || (obsTmp & (1<<7)))
 			{
 				rover_turn_left(speed);
 			}
-			else if((obsTmp & (1<<11)) || (obsTmp & (1<<14)))
+			else if((obsTmp & (1<<1)) || (obsTmp & (1<<3)))
+			{
+				rover_turn_left_light(speed);
+			}
+			else if((obsTmp & (1<<9)) || (obsTmp & (1<<12)))
 			{
 				rover_turn_right(speed);
 			}
-			else
+			else if((obsTmp & (1<<13)) || (obsTmp & (1<<15)))
+			{
+				rover_turn_right_light(speed);
+			}
+			else if(obsTmp & (1<<8))
+			{
+				rover_straight(BACKWARD, speed);
+			}
+			else if(obsTmp == 0)
 			{
 				rover_straight(FORWARD, speed);
 			}
+//********************************************************
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsTmp >> 8)));
 			USART_Transmit_STRING(output);
@@ -314,14 +333,14 @@ int main(void)
 				rover_straight(FORWARD, speed);
 			}
 
-			sprintf(output, "Speed: %03d      ", speed);
+			sprintf(output, "Speed: %02d       ", speed);
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 		}
 
 		sprintf(output, "%05dmV %03dcm", batteryVolt, sense[8]);
-		USART_Transmit_STRING(output);
-		USART_Transmit_STRING("\n\r");
+		//USART_Transmit_STRING(output);
+		//USART_Transmit_STRING("\n\r");
 		lcd_gotoxy(0,1);
 		lcd_puts(output);
 //------------------------------------------
