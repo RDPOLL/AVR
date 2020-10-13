@@ -133,19 +133,19 @@ ISR(INT2_vect)
 	scanOnOff ^= 1;
 }
 
-unsigned short scanObstical(void)
+unsigned short obstical(void)
 {
 	unsigned short dist = 0;
 	unsigned short obstical = 0;
 	unsigned short i = 0;
 
-//=====================================
-//scanning
+
+	//scanning
 	if(scanDir)
 	{
 		for(i = 0; i < 17; i++)
 		{
-			OCR1B = (i + 14);
+			OCR1B = (i + 15);
 
 			_delay_ms(SCANDELAY);
 
@@ -159,21 +159,21 @@ unsigned short scanObstical(void)
 	{
 		for(i = 17; i > 0; i--)
 		{
-			OCR1B = (i + 14);
+			OCR1B = ((i-1) + 15);
 
 			_delay_ms(SCANDELAY);
 
 			dist = readDistance();
 
-			sense[i] = dist;
+			sense[(i-1)] = dist;
 		}
 		scanDir = 1;
 	}
 
 //=================================================
-//Readout
+//calculate an obstical
 
-	for(i = 1; i < 15; i++)
+	for(i = 1; i <= 15; i++)
 	{
 		if(sense[i] <= MINDIST)
 		{
@@ -183,6 +183,36 @@ unsigned short scanObstical(void)
 			}
 		}
 	}
+
+	obstical = (obstical << 1);
+
+//*******************//How to react to obsticals//*********************
+
+	if((obstical & (1<<3)) || (obstical & (1<<4)) || (obstical & (1<<5)))
+	{
+		rover_turn_left(speed);
+	}
+	else if((obstical & (1<<0)) || (obstical & (1<<1)) || (obstical & (1<<2)))
+	{
+		rover_turn_left_light(speed);
+	}
+	else if((obstical & (1<<9)) || (obstical & (1<<10)) || (obstical & (1<<11)))
+	{
+		rover_turn_right(speed);
+	}
+	else if((obstical & (1<<12)) || (obstical & (1<<13)) || (obstical & (1<<14)))
+	{
+		rover_turn_right_light(speed);
+	}
+	else if((obstical & (1<<6)) || (obstical & (1<<7)) || (obstical & (1<<8)))
+	{
+		rover_straight(BACKWARD, speed);
+	}
+	else if(obstical == 0)
+	{
+		rover_straight(FORWARD, speed);
+	}
+//****************************************************************
 	
 	return obstical;
 }
@@ -220,7 +250,7 @@ int main(void)
 	//volatile unsigned short i = 0;
 	char input[16];
 	char output[16];
-	unsigned short obsTmp = 0;
+	unsigned short obsticalVar = 0;
 	unsigned short batteryVolt = 0;
 	
 
@@ -253,20 +283,20 @@ int main(void)
 	ADC_init(0x04);
 
 	usound_init();
-//-------------------
+	//-------------------
 	
 	while(1)
 	{
 		batteryVolt = checkBattery();
 		usrInput(PINB);
 
+		//Setting the Speed
 		if(USART_check_RX())
 		{
 			USART_Receive_STRING(input);
 			speed = atoi(input);
 		}
 
-		//Setting the Speed
 		if(rotary.right && (speed < 50))
 		{
 			speed++;
@@ -275,45 +305,21 @@ int main(void)
 		{
 			speed--;
 		}
+		//-------------------
 
 
 		if(scanOnOff)
 		{
-//********************************************************
-			obsTmp = scanObstical();
+			//sense an react to obsticals in front of the rover
+			obsticalVar = obstical();
 
-			if((obsTmp & (1<<4)) || (obsTmp & (1<<7)))
-			{
-				rover_turn_left(speed);
-			}
-			else if((obsTmp & (1<<1)) || (obsTmp & (1<<3)))
-			{
-				rover_turn_left_light(speed);
-			}
-			else if((obsTmp & (1<<9)) || (obsTmp & (1<<12)))
-			{
-				rover_turn_right(speed);
-			}
-			else if((obsTmp & (1<<13)) || (obsTmp & (1<<15)))
-			{
-				rover_turn_right_light(speed);
-			}
-			else if(obsTmp & (1<<8))
-			{
-				rover_straight(BACKWARD, speed);
-			}
-			else if(obsTmp == 0)
-			{
-				rover_straight(FORWARD, speed);
-			}
-//********************************************************
-
-			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsTmp >> 8)));
+			//outpur
+			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsticalVar >> 8)));
 			USART_Transmit_STRING(output);
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 
-			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsTmp));
+			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsticalVar));
 			USART_Transmit_STRING(output);
 			USART_Transmit_STRING("\n\r");
 			lcd_gotoxy(8,0);
@@ -321,6 +327,7 @@ int main(void)
 		}
 		else
 		{
+			//read distance directly in front of the rover (only one sample)
 			OCR1B = 23;
 			sense[8] = readDistance();
 
