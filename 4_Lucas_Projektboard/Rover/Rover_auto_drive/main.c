@@ -5,6 +5,7 @@
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <string.h>
 #include "adc.c"
 #include "lcd.h"
 #include "rotary.c"
