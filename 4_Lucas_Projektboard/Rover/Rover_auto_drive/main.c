@@ -295,6 +295,7 @@ int main(void)
 		if(USART_check_RX())
 		{
 			USART_Receive_STRING(input);
+			//sscanf(input, "%d", &speed);
 			speed = atoi(input);
 		}
 
