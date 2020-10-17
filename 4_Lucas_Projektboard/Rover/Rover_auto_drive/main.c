@@ -26,7 +26,7 @@
   (byte & 0x01 ? '1' : '0')
 
 #define MINDIST 30
-#define SCANDELAY 60
+#define SCANDELAY 30
 #define MINBATTVOLT 7400 //In mV
 
 unsigned char scanDir = 0;
@@ -139,6 +139,7 @@ unsigned short obstical(void)
 	unsigned short dist = 0;
 	unsigned short obstical = 0;
 	unsigned short i = 0;
+	unsigned char maxDist = 0;
 
 
 	//scanning
@@ -211,7 +212,27 @@ unsigned short obstical(void)
 	}
 	else if(obstical == 0)
 	{
-		rover_straight(FORWARD, speed);
+		//scanning
+		for(i = 0; i <= 16; i++)
+		{
+			if(sense[i] >= sense[maxDist])
+			{
+				maxDist = i;
+			}
+		}
+
+		if((maxDist >= 6) && (maxDist <= 10))
+		{
+			rover_straight(FORWARD, speed);
+		}
+		else if(maxDist <= 5)
+		{
+			rover_move(FORWARD, (speed/2), FORWARD, speed);
+		}
+		else if(maxDist >= 11)
+		{
+			rover_move(FORWARD, speed, FORWARD, (speed/2));
+		}
 	}
 //****************************************************************
 	
@@ -248,11 +269,13 @@ unsigned short checkBattery(void)
 //------------------------------MAIN------------------------------------
 int main(void)
 {
-	//volatile unsigned short i = 0;
+	volatile unsigned char i = 0;
+	volatile unsigned char a = 0;
 	char input[16];
 	char output[16];
 	unsigned short obsticalVar = 0;
 	unsigned short batteryVolt = 0;
+	char tempDist = 0;
 	
 
 	DDRA = 0x00;
@@ -279,7 +302,7 @@ int main(void)
 
 	USART_Init(103);
 	
-	HC_init(96, 1, 1);
+	HC_init(96, 1, 8);
 
 	ADC_init(0x04);
 
@@ -315,15 +338,30 @@ int main(void)
 			//sense an react to obsticals in front of the rover
 			obsticalVar = obstical();
 
-			//outpur
+			//output
+			for(i = 0; i < 17; i++)
+			{
+				tempDist = (sense[i] / 30);
+				for(a = 0; a < 7; a++)
+				{
+					tempDist--;
+					if(tempDist >= 0)
+						USART_Transmit_STRING("-");
+					else
+						USART_Transmit_STRING("#");
+				}
+				USART_Transmit_STRING("\n\r");
+			}
+			USART_Transmit_STRING("\n\r\n\r");
+			
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsticalVar >> 8)));
-			USART_Transmit_STRING(output);
+			//USART_Transmit_STRING(output);
 			lcd_gotoxy(0,0);
 			lcd_puts(output);
 
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(obsticalVar));
-			USART_Transmit_STRING(output);
-			USART_Transmit_STRING("\n\r");
+			//USART_Transmit_STRING(output);
+			//USART_Transmit_STRING("\n\r");
 			lcd_gotoxy(8,0);
 			lcd_puts(output);
 		}
