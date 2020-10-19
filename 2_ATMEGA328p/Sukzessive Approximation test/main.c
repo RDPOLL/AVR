@@ -5,7 +5,7 @@
 #include <util/delay.h>
 #include "rotary.c"
 
-#define DELAY 100
+#define ENTPRELLUNG 500
 
 
 //------------------------------MAIN------------------------------------
@@ -25,7 +25,7 @@ int main(void)
 	{
 		if((~PINB) & (1<<PB7))
 		{
-			_delay_ms(500);
+			_delay_ms(ENTPRELLUNG);
 			adcCntr++;
 		}
 
@@ -33,7 +33,7 @@ int main(void)
 		{
 			case 0:
 				OCR1A = 0x80;
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<7);
 				else
@@ -43,7 +43,7 @@ int main(void)
 			case 1:
 				OCR1A = adcValue;
 				OCR1A |= (1<<6);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<6);
 				else
@@ -53,7 +53,7 @@ int main(void)
 			case 2:
 				OCR1A = adcValue;
 				OCR1A |= (1<<5);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<5);
 				else
@@ -63,7 +63,7 @@ int main(void)
 			case 3:
 				OCR1A = adcValue;
 				OCR1A |= (1<<4);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<4);
 				else
@@ -73,7 +73,7 @@ int main(void)
 			case 4:
 				OCR1A = adcValue;
 				OCR1A |= (1<<3);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<3);
 				else
@@ -83,7 +83,7 @@ int main(void)
 			case 5:
 				OCR1A = adcValue;
 				OCR1A |= (1<<2);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<2);
 				else
@@ -93,7 +93,7 @@ int main(void)
 			case 6:
 				OCR1A = adcValue;
 				OCR1A |= (1<<1);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<1);
 				else
@@ -103,7 +103,7 @@ int main(void)
 			case 7:
 				OCR1A = adcValue;
 				OCR1A |= (1<<0);
-				_delay_ms(DELAY);
+				_delay_ms(50);
 				if(PINB & (1<<PB2))
 					adcValue |= (1<<0);
 				else
