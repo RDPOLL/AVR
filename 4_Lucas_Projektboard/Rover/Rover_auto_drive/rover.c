@@ -18,7 +18,7 @@ volatile unsigned char roverDirR = 0;
 volatile unsigned char roverDirL = 0;
 
 
-ISR(TIMER1_OVF_vect)
+ISR(TIMER2_OVF_vect)
 {
 	unsigned short measSpeedR = 0;
 	unsigned short measSpeedL = 0;
@@ -171,20 +171,21 @@ void rover_init(void)
 
 	//pwm settings
 	TCCR0A |= (1<<COM0A1) | (1<<COM0B1) | (1<<WGM00);
-	TCCR1A |= (1<<WGM10);
-	TCCR1B |= (1<<WGM12);
 
 	//Set pwm speed
 	TCCR0B |= (1<<CS00);
-	TCCR1B |= (1<<CS12) | (1<<CS10);
+
+	//set Timer int speed
+	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 
 	//enable overflow interupt
-	sei();
-	TIMSK1 |= (1<<TOIE1);
+	TIMSK2 |= (1<<TOIE2);
 
 	//ext interupts settings
 	EICRA |= (1<<ISC00) | (1<<ISC10);
 	EIMSK |= (1<<INT0) | (1<<INT1);
+
+	sei();
 
 	rover_stop();
 }

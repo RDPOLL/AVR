@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
-#define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "lcd.h"

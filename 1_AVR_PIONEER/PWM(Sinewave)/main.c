@@ -9,9 +9,8 @@
 #include "rotary.c"
 #include "adc.c"
 
-unsigned char sine = 0;
-unsigned char freq = 0;
-unsigned char comp = 0;
+volatile unsigned long sine ;
+volatile unsigned long freq ;
 
 unsigned char sine_wave[256] =
 {
@@ -51,18 +50,14 @@ unsigned char sine_wave[256] =
 
 ISR(TIMER1_OVF_vect)
 {
-	if(freq++ >= comp)
-	{
-		freq = 0;
-		OCR1A = sine_wave[sine += 1];
-		if(sine > 256) sine = 0;
-	}
+	sine += freq;
+	OCR1A = sine_wave[(sine>>24)];
 }
 
 //------------------------------MAIN------------------------------------
 int main(void)
 {
-	sei();
+	
 
 	DDRD = 0x3F;			//Schalterport
 	DDRB = 0Xff;			//LEDsport
@@ -83,12 +78,18 @@ int main(void)
 
 	OCR1A = 0x00;			//PWM output A
 	OCR1B = 0x80;			//PWM output B = 50%
-
+	freq=(1<<23);
+     sei();
+     
 	while(1)
 	{
 		usrInput(PIND);
 
-		if(rotary.left) comp--;
-		if(rotary.right) comp++;
+		if(rotary.left) freq-=(65536*16);
+		if(rotary.right) freq+=(65536*16);
+
+		sprintf(output, "%04d", ((freq>>15) & 0xffff) );
+		lcd_gotoxy(0,0);
+		lcd_puts(output);
 	}
-}//end of main
+}//end of main0

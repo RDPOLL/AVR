@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include <avr/sleep.h>
-#define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <string.h>
@@ -13,6 +12,7 @@
 #include "serial.c"
 #include "hc12.c"
 #include "usound.c"
+#include "servo.c"
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -49,7 +49,7 @@ volatile unsigned char roverDirR = 0;
 volatile unsigned char roverDirL = 0;
 
 
-ISR(TIMER1_OVF_vect)
+ISR(TIMER2_OVF_vect)
 {
 	unsigned short measSpeedR = 0;
 	unsigned short measSpeedL = 0;
@@ -134,6 +134,11 @@ ISR(INT2_vect)
 	scanOnOff ^= 1;
 }
 
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 unsigned short obstical(void)
 {
 	unsigned short dist = 0;
@@ -147,7 +152,8 @@ unsigned short obstical(void)
 	{
 		for(i = 0; i < 17; i++)
 		{
-			OCR1B = (i + 15);
+			//OCR1B = ((17 - i) + 15);
+			servo_setPuls(map(i, 0, 17, 2000, 1000));
 
 			_delay_ms(SCANDELAY);
 
@@ -161,7 +167,8 @@ unsigned short obstical(void)
 	{
 		for(i = 17; i > 0; i--)
 		{
-			OCR1B = ((i-1) + 15);
+			//OCR1B = (((17 - i)-1) + 15);
+			servo_setPuls(map(i, 0, 17, 2000, 1000));
 
 			_delay_ms(SCANDELAY);
 
@@ -285,11 +292,6 @@ int main(void)
 
 	PORTB = 0x07;
 
-	//PWM output B init
-	TCCR1A |= (1<<COM1B1);
-	//set servo to 50%
-	OCR1B = 23;
-
 	//ext interupts settings
 	EICRA |= (1<<ISC21);
 	EIMSK |= (1<<INT2);
@@ -305,6 +307,8 @@ int main(void)
 	HC_init(96, 1, 8);
 
 	ADC_init(0x04);
+
+	servo_init();
 
 	usound_init();
 	//-------------------
@@ -368,7 +372,7 @@ int main(void)
 		else
 		{
 			//read distance directly in front of the rover (only one sample)
-			OCR1B = 23;
+			servo_setDegree(0);
 			sense[8] = readDistance();
 
 			if(sense[8] < MINDIST)
