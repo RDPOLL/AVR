@@ -19,12 +19,12 @@ uint32_t readDistance(void)
 	
 	while(readStatus)
 	{
-		while((US_PIN & (1 << US_ECHO)) && ((disTime / 55) < 500))
+		while((US_PIN & (1 << US_ECHO)) && ((disTime / 55) < 400))
 		{
 			disTime++;
 			readStatus = 0;
 		}
-		if((disTime / 55) == 500)
+		if((disTime / 55) == 400)
 		{
 			disTime = 0;
 		}

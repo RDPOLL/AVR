@@ -2,6 +2,8 @@
 	Used to controll a servo. Timer 1 is used.
 */
 
+#define PULSOFFSET -15
+
 
 void servo_init(void)
 {
@@ -16,11 +18,11 @@ void servo_init(void)
 	ICR1 = 10000;
 }
 
-//Set Puls between 1000us and 2000us 
+//Set Puls between 750us and 2250us 
 void servo_setPuls(unsigned short puls)
 {
-	if((puls >= 1000) && (puls <= 2000))
-		OCR1B = (puls * 2);
+	if((puls >= 750) && (puls <= 2250))
+		OCR1B = ((puls + PULSOFFSET) * 2);
 	else
 		OCR1B = 0;
 }

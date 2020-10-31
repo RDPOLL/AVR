@@ -26,13 +26,14 @@
   (byte & 0x01 ? '1' : '0')
 
 #define MINDIST 30
-#define SCANDELAY 30
+#define SCANDELAY 40
 #define MINBATTVOLT 7400 //In mV
 
 unsigned char scanDir = 0;
 unsigned char scanOnOff = 0;
 unsigned short sense[17];
 unsigned char speed = 0;
+char output[16];
 
 
 //Rover var
@@ -152,7 +153,6 @@ unsigned short obstical(void)
 	{
 		for(i = 0; i < 17; i++)
 		{
-			//OCR1B = ((17 - i) + 15);
 			servo_setPuls(map(i, 0, 17, 2000, 1000));
 
 			_delay_ms(SCANDELAY);
@@ -167,8 +167,7 @@ unsigned short obstical(void)
 	{
 		for(i = 17; i > 0; i--)
 		{
-			//OCR1B = (((17 - i)-1) + 15);
-			servo_setPuls(map(i, 0, 17, 2000, 1000));
+			servo_setPuls(map((i-1), 0, 17, 2000, 1000));
 
 			_delay_ms(SCANDELAY);
 
@@ -178,11 +177,24 @@ unsigned short obstical(void)
 		}
 		scanDir = 1;
 	}
+//=================================================
+//filtering for not seeing near parallel wall
+
+for(i = 1; i < 16; i++)
+{
+	if(((sense[i-1] + 50) < sense[i]) && ((sense[i+1] + 50) < sense[i]))
+	{
+		if(((sense[i-1] <= (sense[i+1] + 15)) && (sense[i-1] >= (sense[i+1] - 15))) && ((sense[i+1] <= (sense[i-1] + 15)) && (sense[i+1] >= (sense[i-1] - 15))))
+		{
+			sense[i] = ((sense[i-1] + sense[i+1]) / 2);
+		}
+	}
+}
 
 //=================================================
 //calculate an obstical
 
-	for(i = 1; i <= 15; i++)
+	for(i = 1; i < 16; i++)
 	{
 		if(sense[i] <= MINDIST)
 		{
@@ -242,6 +254,14 @@ unsigned short obstical(void)
 		}
 	}
 //****************************************************************
+//output uart
+
+for(i = 0; i < 17; i++)
+{
+	sprintf(output, "%d:%03d ", i, sense[i]);
+	USART_Transmit_STRING(output);
+}
+USART_Transmit_STRING("\r");
 	
 	return obstical;
 }
@@ -277,12 +297,9 @@ unsigned short checkBattery(void)
 int main(void)
 {
 	volatile unsigned char i = 0;
-	volatile unsigned char a = 0;
 	char input[16];
-	char output[16];
 	unsigned short obsticalVar = 0;
 	unsigned short batteryVolt = 0;
-	char tempDist = 0;
 	
 
 	DDRA = 0x00;
@@ -341,22 +358,6 @@ int main(void)
 		{
 			//sense an react to obsticals in front of the rover
 			obsticalVar = obstical();
-
-			//output
-			for(i = 0; i < 17; i++)
-			{
-				tempDist = (sense[i] / 30);
-				for(a = 0; a < 7; a++)
-				{
-					tempDist--;
-					if(tempDist >= 0)
-						USART_Transmit_STRING("-");
-					else
-						USART_Transmit_STRING("#");
-				}
-				USART_Transmit_STRING("\n\r");
-			}
-			USART_Transmit_STRING("\n\r\n\r");
 			
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsticalVar >> 8)));
 			//USART_Transmit_STRING(output);
