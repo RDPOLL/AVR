@@ -44,6 +44,8 @@ uint8_t mcusr_mirror __attribute__ ((section (".noinit")));
 #define MINDIST 30
 #define SCANDELAY 40
 #define MINBATTVOLT 7400 //In mV
+#define LIGHTTRESHOLD 500
+#define AUTODRIVESTARTSPEED 6
 
 unsigned char scanDir = 0;
 unsigned char scanOnOff = 0;
@@ -148,7 +150,25 @@ ISR(INT1_vect)
 
 ISR(INT2_vect)
 {
+	//disable INT2
+	EIMSK &= ~(1<<INT2);
+	
 	scanOnOff ^= 1;
+
+	if(scanOnOff && (speed == 0))
+	{
+	//if speed wasnt set to another value
+		speed = AUTODRIVESTARTSPEED;
+	}
+	else if(!scanOnOff)
+	{
+		speed = 0;
+	}
+
+	_delay_ms(100);
+
+	//enable INT2
+	EIMSK |= (1<<INT2);
 }
 
 long map(long x, long in_min, long in_max, long out_min, long out_max)
@@ -200,10 +220,7 @@ for(i = 1; i < 16; i++)
 {
 	if(((sense[i-1] + 50) < sense[i]) && ((sense[i+1] + 50) < sense[i]))
 	{
-		if(((sense[i-1] <= (sense[i+1] + 15)) && (sense[i-1] >= (sense[i+1] - 15))) && ((sense[i+1] <= (sense[i-1] + 15)) && (sense[i+1] >= (sense[i-1] - 15))))
-		{
-			sense[i] = ((sense[i-1] + sense[i+1]) / 2);
-		}
+		sense[i] = ((sense[i-1] + sense[i+1]) / 2);
 	}
 }
 
@@ -220,6 +237,13 @@ for(i = 1; i < 16; i++)
 			}
 		}
 	}
+
+	//scaning the outher most sense[] for an obsitcal
+	if((sense[0] <= MINDIST) && ((sense[1] <= (sense[0] + 10)) && (sense[1] >= (sense[0] - 10))))
+		obstical |= (1<<1);
+		
+	if((sense[16] <= MINDIST)  && ((sense[15] <= (sense[16] + 10)) && (sense[15] >= (sense[16] - 10))))
+		obstical |= (1<<15);
 
 	obstical = (obstical << 1);
 
@@ -313,10 +337,12 @@ unsigned short checkBattery(void)
 		
 		wdt_disable();
 
-		lcd_gotoxy(0,0);
-		lcd_puts("Charge Battery!!");
+		lcd_gotoxy(1,0);
+		lcd_puts("Charge Battery");
+		lcd_gotoxy(2,1);
+		lcd_puts("Immediately");
 
-		lcd_command(LCD_DISP_OFF);
+		//lcd_command(LCD_DISP_OFF);
 
 		MCUCR |= (1<<BODS);
 		PRR1 = 0x01;
@@ -328,12 +354,20 @@ unsigned short checkBattery(void)
 	return battVolt;
 }
 
-void headLights(unsigned char onOff)
+unsigned short headLights(void)
 {
-	if(onOff)
+	unsigned short lightSens = ADC_read(3);
+
+	if((lightSens <= LIGHTTRESHOLD) && (!(PORTD & (1<<PD6))))
+	{
 		PORTD |= (1<<PD6);
-	else
+	}
+	else if(lightSens >= (LIGHTTRESHOLD + 25))
+	{
 		PORTD &= ~(1<<PD6);
+	}
+
+	return lightSens;
 }
 
 //------------------------------MAIN------------------------------------
@@ -352,9 +386,6 @@ int main(void)
 
 	//Pull down
 	PORTB = 0x07;
-
-	//startup light
-	headLights(1);
 
 	//ext interupts settings
 	EICRA |= (1<<ISC21);
@@ -376,11 +407,8 @@ int main(void)
 
 	usound_init();
 
-	wdt_enable(WDTO_8S);
+	wdt_enable(WDTO_2S);
 	//-------------------
-	
-	//startup light
-	headLights(0);
 	
 	while(1)
 	{
@@ -389,14 +417,7 @@ int main(void)
 		batteryVolt = checkBattery();
 		usrInput(PINB);
 
-		if(ADC_read(3) <= 500)
-		{
-			headLights(1);
-		}
-		else
-		{
-			headLights(0);
-		}
+		headLights();
 		
 		//Setting the Speed
 		if(USART_check_RX())
@@ -406,7 +427,7 @@ int main(void)
 			speed = atoi(input);
 		}
 
-		if(rotary.right && (speed < 50))
+		if(rotary.right && (speed < 30))
 		{
 			speed++;
 		}
@@ -418,8 +439,8 @@ int main(void)
 
 
 		if(scanOnOff)
-		{
-			//sense an react to obsticals in front of the rover
+		{	
+			//sense and react to obsticals in front of the rover
 			obsticalVar = obstical();
 			
 			sprintf(output, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY((obsticalVar >> 8)));
