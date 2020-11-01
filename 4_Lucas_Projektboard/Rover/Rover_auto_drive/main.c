@@ -5,6 +5,8 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <string.h>
+#include <avr/wdt.h>
+#include <avr/sleep.h>
 #include "adc.c"
 #include "lcd.h"
 #include "rotary.c"
@@ -13,6 +15,20 @@
 #include "hc12.c"
 #include "usound.c"
 #include "servo.c"
+
+//==============WDTIMER===============
+uint8_t mcusr_mirror __attribute__ ((section (".noinit")));
+
+    void get_mcusr(void) \
+      __attribute__((naked)) \
+      __attribute__((section(".init3")));
+    void get_mcusr(void)
+    {
+      mcusr_mirror = MCUSR;
+      MCUSR = 0;
+      wdt_disable();
+    }
+//=====================================
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -281,18 +297,45 @@ unsigned short checkBattery(void)
 	{
 		rover_stop();
 		OCR1B = 0;
+		PORTD &= ~(1<<PD6);
 		HC_goSleep();
 		lcd_clrscr();
 		
-		while(1)
+
+		for(i = 0; i < 10; i++)
 		{
-			PORTC ^= (1<<PC7);
-			_delay_ms(500);
+			wdt_reset();
+			PORTC |= (1<<PC7);
+			_delay_ms(100);
+			PORTC &= ~(1<<PC7);
+			_delay_ms(900);
 		}
+		
+		wdt_disable();
+
+		lcd_gotoxy(0,0);
+		lcd_puts("Charge Battery!!");
+
+		lcd_command(LCD_DISP_OFF);
+
+		MCUCR |= (1<<BODS);
+		PRR1 = 0x01;
+		PRR0 = 0xFF;
+		set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+		sleep_mode();
 	}
 	
 	return battVolt;
 }
+
+void headLights(unsigned char onOff)
+{
+	if(onOff)
+		PORTD |= (1<<PD6);
+	else
+		PORTD &= ~(1<<PD6);
+}
+
 //------------------------------MAIN------------------------------------
 int main(void)
 {
@@ -305,9 +348,13 @@ int main(void)
 	DDRA = 0x00;
 	//DDRB = 0xff;
 	DDRC = 0xff;			//LCD
-	DDRD |= (1<<PD4);
+	DDRD |= (1<<PD4) | (1<<PD6);
 
+	//Pull down
 	PORTB = 0x07;
+
+	//startup light
+	headLights(1);
 
 	//ext interupts settings
 	EICRA |= (1<<ISC21);
@@ -323,18 +370,34 @@ int main(void)
 	
 	HC_init(96, 1, 8);
 
-	ADC_init(0x04);
+	ADC_init(0x0C);
 
 	servo_init();
 
 	usound_init();
+
+	wdt_enable(WDTO_8S);
 	//-------------------
+	
+	//startup light
+	headLights(0);
 	
 	while(1)
 	{
+		wdt_reset();
+		
 		batteryVolt = checkBattery();
 		usrInput(PINB);
 
+		if(ADC_read(3) <= 500)
+		{
+			headLights(1);
+		}
+		else
+		{
+			headLights(0);
+		}
+		
 		//Setting the Speed
 		if(USART_check_RX())
 		{
