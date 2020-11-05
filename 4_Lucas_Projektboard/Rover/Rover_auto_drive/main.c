@@ -238,15 +238,6 @@ for(i = 1; i < 16; i++)
 		}
 	}
 
-	//scaning the outher most sense[] for an obsitcal
-	if((sense[0] <= MINDIST) && ((sense[1] <= (sense[0] + 10)) && (sense[1] >= (sense[0] - 10))))
-		obstical |= (1<<1);
-		
-	if((sense[16] <= MINDIST)  && ((sense[15] <= (sense[16] + 10)) && (sense[15] >= (sense[16] - 10))))
-		obstical |= (1<<15);
-
-	obstical = (obstical << 1);
-
 //*******************//How to react to obsticals//*********************
 
 	if((obstical & (1<<3)) || (obstical & (1<<4)) || (obstical & (1<<5)))
