@@ -64,7 +64,7 @@ unsigned char USART_Receive_STRING(unsigned char *st)
 	unsigned char c = 0;
 	unsigned char digit = 0;
 
-	while((digit < SLAENG) && ((c = USART_Receive()) != '\r'))
+	while((digit < SLAENG) && ((c = USART_Receive()) >= ' '))
 	{
 		st[digit++] = c;		//add char to string
 	}
