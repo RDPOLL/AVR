@@ -22,7 +22,7 @@ void USART_Init( unsigned int baud )
 	DDRD |= 0x02;
 	
 	/* Enable receiver and transmitter */
-	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);
 	
 	/* Set frame format: 8data, 2stop bit */
 	UCSR0C = (1<<USBS0)|(3<<UCSZ00);
