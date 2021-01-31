@@ -14,7 +14,7 @@ void ADC_init(uint8_t channel)
 	So, we trade accuracy for speed */
 	DIDR0  = channel;								//Disconnect Digital input from used Analog inputs
 	ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));	//ADC Prescaler of 128 i.e 16Mhz/128 = 125Khz the ADC clock
-	ADMUX  |= (0<<REFS0)|(0<<REFS1);				//We are using Vcc for reference i.e Vref = Vcc.
+	ADMUX  |= (0<<REFS0)|(0<<REFS1);				// We are using Vcc for reference i.e Vref = Vcc.
 	ADCSRA |= (1<<ADEN)|(1<<ADSC);					//Turn on ADC and Do an initial conversion because this one is the slowest and to ensure that everything is up in running-Free running mode
 }
  

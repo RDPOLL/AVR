@@ -9,10 +9,13 @@
 #include "serial.c"
 //#include "rotary.c"
 
+#define GPRMC 0
+#define GPVTG 1
+
 unsigned char rxChar = 0;
 unsigned char rxCommand = 0;
 unsigned char buffer[100];
-char GPSinput[7][100];
+char GPSinput[2][100];
 
 ISR(USART0_RX_vect)
 {
@@ -25,11 +28,11 @@ ISR(USART0_RX_vect)
 		
 		if(strcmp("$GPRMC", buffer) == 0)
 		{
-			strcpy(GPSinput[0], buffer);
+			strcpy(GPSinput[GPRMC], buffer);
 		}
 		else if(strcmp("$GPVTG", buffer) == 0)
 		{
-			strcpy(GPSinput[1], buffer);
+			strcpy(GPSinput[GPVTG], buffer);
 		}
 	}
 	else
@@ -64,7 +67,7 @@ int main(void)
 		{
 			USART_Transmit_STRING(GPSinput[i]);
 		}
-		sscanf(GPSinput[0], "$GPRMC,%f,%c,%f,%c,%f,%c,%f,,%d,,,%*s", &time,&flag,&x,&xf,&y,&yf,&speed,&course);
+		sscanf(GPSinput[GPRMC], "$GPRMC,%f,%c,%f,%c,%f,%c,%f,,%d,,,%*s", &time,&flag,&x,&xf,&y,&yf,&speed,&course);
 			
 		sprintf(Output, "%06.0f, %3.1f",time, speed);
 		lcd_gotoxy(0,0);
