@@ -6,7 +6,7 @@
 #include <avr/pgmspace.h>
 #include "adc.c"
 
-#define switchTemp 300  //32 Grad = 320
+#define switchTemp 280  //32 Grad = 320
 
 #define FAN_ON PORTB |= (1<<PB3)
 #define FAN_OFF PORTB &= ~(1<<PB3)
@@ -172,7 +172,7 @@ int main(void)
 		
 		if(temp >= switchTemp)
 			FAN_ON;
-		else if(temp <= (switchTemp - 4))
+		else if(temp <= (switchTemp - 20))
 			FAN_OFF;
 //------------------------------------------
 	}//end of while
