@@ -151,6 +151,8 @@ short NTC_ADC2Temperature(unsigned short adc_value)
 //------------------------------MAIN------------------------------------
 int main(void)
 {
+	unsigned char i = 0;
+	long tmp = 0;
 	short temp = 0;
 	
 	PRR |= 0x0e;		//Power Reduction
@@ -168,7 +170,12 @@ int main(void)
 
 	while(1)
 	{
-		temp = NTC_ADC2Temperature(ADC_read(2));
+		tmp = 0;
+		for(i = 100; i > 0; i--)
+		{
+			tmp += ADC_read(2);
+		}
+		temp = NTC_ADC2Temperature(tmp / 100);
 		
 		if(temp >= switchTemp)
 			FAN_ON;
