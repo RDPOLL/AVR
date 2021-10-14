@@ -213,19 +213,19 @@ unsigned short obstical(void)
 		}
 		scanDir = 1;
 	}
-//=================================================
-//filtering for not seeing near parallel wall
+	//=================================================
+	//filtering for not seeing near parallel wall
 
-for(i = 1; i < 16; i++)
-{
-	if(((sense[i-1] + 50) < sense[i]) && ((sense[i+1] + 50) < sense[i]))
+	for(i = 1; i < 16; i++)
 	{
-		sense[i] = ((sense[i-1] + sense[i+1]) / 2);
+		if(((sense[i-1] + 50) < sense[i]) && ((sense[i+1] + 50) < sense[i]))
+		{
+			sense[i] = ((sense[i-1] + sense[i+1]) / 2);
+		}
 	}
-}
 
-//=================================================
-//calculate an obstical
+	//=================================================
+	//calculate an obstical
 
 	for(i = 1; i < 16; i++)
 	{
@@ -284,15 +284,15 @@ for(i = 1; i < 16; i++)
 			rover_move(FORWARD, speed, FORWARD, (speed/2));
 		}
 	}
-//****************************************************************
-//output uart
+	//****************************************************************
+	//output uart
 
-for(i = 0; i < 17; i++)
-{
-	sprintf(output, "%d:%03d ", i, sense[i]);
-	USART_Transmit_STRING(output);
-}
-USART_Transmit_STRING("\r");
+	for(i = 0; i < 17; i++)
+	{
+		sprintf(output, "%d:%03d ", i, sense[i]);
+		USART_Transmit_STRING(output);
+	}
+	USART_Transmit_STRING("\r");
 	
 	return obstical;
 }

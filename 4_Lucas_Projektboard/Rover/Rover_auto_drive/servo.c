@@ -1,5 +1,5 @@
 /*
-	Used to controll a servo. Timer 1 is used.
+	Used to control a servo. Timer 1 is used.
 */
 
 #define PULSOFFSET -15
