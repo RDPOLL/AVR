@@ -1,0 +1,1510 @@
+   1               		.file	"graphics.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	glcd_get_pixel
+  18               	glcd_get_pixel:
+  19               	.LFB8:
+  20               	.LM1:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24 0000 482F      		mov r20,r24
+  25               	.LM2:
+  26 0002 8435      		cpi r24,lo8(84)
+  27 0004 00F4      		brsh .L2
+  28 0006 6033      		cpi r22,lo8(48)
+  29 0008 00F4      		brsh .L2
+  30 000a 862F      		mov r24,r22
+  31               	.LVL1:
+  32 000c 8695      		lsr r24
+  33 000e 8695      		lsr r24
+  34 0010 8695      		lsr r24
+  35 0012 90E0      		ldi r25,lo8(0)
+  36 0014 24E5      		ldi r18,lo8(84)
+  37 0016 30E0      		ldi r19,hi8(84)
+  38 0018 829F      		mul r24,r18
+  39 001a F001      		movw r30,r0
+  40 001c 839F      		mul r24,r19
+  41 001e F00D      		add r31,r0
+  42 0020 929F      		mul r25,r18
+  43 0022 F00D      		add r31,r0
+  44 0024 1124      		clr r1
+  45 0026 E40F      		add r30,r20
+  46 0028 F11D      		adc r31,__zero_reg__
+  47 002a E050      		subi r30,lo8(-(glcd_buffer))
+  48 002c F040      		sbci r31,hi8(-(glcd_buffer))
+  49 002e 8081      		ld r24,Z
+  50 0030 90E0      		ldi r25,lo8(0)
+  51 0032 6770      		andi r22,lo8(7)
+  52               	.LVL2:
+  53 0034 00C0      		rjmp 2f
+  54 0036 9595      	1:	asr r25
+  55 0038 8795      		ror r24
+  56 003a 6A95      	2:	dec r22
+  57 003c 02F4      		brpl 1b
+  58 003e 8170      		andi r24,lo8(1)
+  59 0040 0895      		ret
+  60               	.LVL3:
+  61               	.L2:
+  62 0042 80E0      		ldi r24,lo8(0)
+  63               	.LVL4:
+  64               	.LM3:
+  65 0044 0895      		ret
+  66               	.LFE8:
+  68               	.global	glcd_draw_bitmap
+  70               	glcd_draw_bitmap:
+  71               	.LFB18:
+  72               	.LM4:
+  73               	.LVL5:
+  74               	/* prologue: function */
+  75               	/* frame size = 0 */
+  76 0046 BC01      		movw r22,r24
+  77               	.LM5:
+  78 0048 8091 0000 		lds r24,glcd_buffer_selected
+  79 004c 9091 0000 		lds r25,(glcd_buffer_selected)+1
+  80               	.LVL6:
+  81 0050 48EF      		ldi r20,lo8(504)
+  82 0052 51E0      		ldi r21,hi8(504)
+  83 0054 0E94 0000 		call memcpy_P
+  84               	.LVL7:
+  85               	.LM6:
+  86 0058 0E94 0000 		call glcd_bbox_refresh
+  87               	/* epilogue start */
+  88               	.LM7:
+  89 005c 0895      		ret
+  90               	.LFE18:
+  92               	.global	glcd_invert_pixel
+  94               	glcd_invert_pixel:
+  95               	.LFB9:
+  96               	.LM8:
+  97               	.LVL8:
+  98 005e 0F93      		push r16
+  99 0060 1F93      		push r17
+ 100               	/* prologue: function */
+ 101               	/* frame size = 0 */
+ 102 0062 082F      		mov r16,r24
+ 103 0064 162F      		mov r17,r22
+ 104               	.LM9:
+ 105 0066 8435      		cpi r24,lo8(84)
+ 106 0068 00F4      		brsh .L9
+ 107               	.LVL9:
+ 108 006a 6033      		cpi r22,lo8(48)
+ 109 006c 00F4      		brsh .L9
+ 110               	.LVL10:
+ 111               	.LM10:
+ 112 006e 402F      		mov r20,r16
+ 113 0070 212F      		mov r18,r17
+ 114 0072 0E94 0000 		call glcd_update_bbox
+ 115               	.LVL11:
+ 116               	.LM11:
+ 117 0076 E12F      		mov r30,r17
+ 118 0078 E695      		lsr r30
+ 119 007a E695      		lsr r30
+ 120 007c E695      		lsr r30
+ 121 007e 84E5      		ldi r24,lo8(84)
+ 122 0080 E89F      		mul r30,r24
+ 123 0082 F001      		movw r30,r0
+ 124 0084 1124      		clr r1
+ 125 0086 E00F      		add r30,r16
+ 126 0088 F11D      		adc r31,__zero_reg__
+ 127 008a E050      		subi r30,lo8(-(glcd_buffer))
+ 128 008c F040      		sbci r31,hi8(-(glcd_buffer))
+ 129 008e 1770      		andi r17,lo8(7)
+ 130 0090 81E0      		ldi r24,lo8(1)
+ 131 0092 90E0      		ldi r25,hi8(1)
+ 132 0094 00C0      		rjmp 2f
+ 133 0096 880F      	1:	lsl r24
+ 134 0098 991F      		rol r25
+ 135 009a 1A95      	2:	dec r17
+ 136 009c 02F4      		brpl 1b
+ 137 009e 2081      		ld r18,Z
+ 138 00a0 2827      		eor r18,r24
+ 139 00a2 2083      		st Z,r18
+ 140               	.LVL12:
+ 141               	.L9:
+ 142               	/* epilogue start */
+ 143               	.LM12:
+ 144 00a4 1F91      		pop r17
+ 145               	.LVL13:
+ 146 00a6 0F91      		pop r16
+ 147               	.LVL14:
+ 148 00a8 0895      		ret
+ 149               	.LFE9:
+ 151               	.global	glcd_invert_area
+ 153               	glcd_invert_area:
+ 154               	.LFB17:
+ 155               	.LM13:
+ 156               	.LVL15:
+ 157 00aa DF92      		push r13
+ 158 00ac EF92      		push r14
+ 159 00ae FF92      		push r15
+ 160 00b0 0F93      		push r16
+ 161 00b2 1F93      		push r17
+ 162 00b4 CF93      		push r28
+ 163 00b6 DF93      		push r29
+ 164               	/* prologue: function */
+ 165               	/* frame size = 0 */
+ 166 00b8 D62E      		mov r13,r22
+ 167               	.LM14:
+ 168 00ba 082F      		mov r16,r24
+ 169               	.LVL16:
+ 170               	.LM15:
+ 171 00bc E82E      		mov r14,r24
+ 172 00be FF24      		clr r15
+ 173 00c0 E40E      		add r14,r20
+ 174 00c2 F11C      		adc r15,__zero_reg__
+ 175               	.LM16:
+ 176 00c4 C62F      		mov r28,r22
+ 177 00c6 D0E0      		ldi r29,lo8(0)
+ 178 00c8 C20F      		add r28,r18
+ 179 00ca D11D      		adc r29,__zero_reg__
+ 180 00cc 00C0      		rjmp .L11
+ 181               	.LVL17:
+ 182               	.L12:
+ 183               	.LM17:
+ 184 00ce 802F      		mov r24,r16
+ 185               	.LVL18:
+ 186 00d0 612F      		mov r22,r17
+ 187 00d2 0E94 0000 		call glcd_invert_pixel
+ 188               	.LVL19:
+ 189               	.LM18:
+ 190 00d6 1F5F      		subi r17,lo8(-(1))
+ 191               	.LVL20:
+ 192               	.L14:
+ 193 00d8 812F      		mov r24,r17
+ 194 00da 90E0      		ldi r25,lo8(0)
+ 195               	.LVL21:
+ 196 00dc 8C17      		cp r24,r28
+ 197 00de 9D07      		cpc r25,r29
+ 198 00e0 04F0      		brlt .L12
+ 199               	.LVL22:
+ 200               	.LM19:
+ 201 00e2 0F5F      		subi r16,lo8(-(1))
+ 202               	.LVL23:
+ 203               	.L11:
+ 204 00e4 802F      		mov r24,r16
+ 205               	.LVL24:
+ 206 00e6 90E0      		ldi r25,lo8(0)
+ 207               	.LVL25:
+ 208 00e8 8E15      		cp r24,r14
+ 209 00ea 9F05      		cpc r25,r15
+ 210 00ec 04F4      		brge .L15
+ 211               	.LVL26:
+ 212 00ee 1D2D      		mov r17,r13
+ 213 00f0 00C0      		rjmp .L14
+ 214               	.L15:
+ 215               	/* epilogue start */
+ 216               	.LM20:
+ 217 00f2 DF91      		pop r29
+ 218 00f4 CF91      		pop r28
+ 219 00f6 1F91      		pop r17
+ 220               	.LVL27:
+ 221 00f8 0F91      		pop r16
+ 222 00fa FF90      		pop r15
+ 223 00fc EF90      		pop r14
+ 224 00fe DF90      		pop r13
+ 225               	.LVL28:
+ 226 0100 0895      		ret
+ 227               	.LFE17:
+ 229               	.global	glcd_set_pixel
+ 231               	glcd_set_pixel:
+ 232               	.LFB7:
+ 233               	.LM21:
+ 234               	.LVL29:
+ 235               	/* prologue: function */
+ 236               	/* frame size = 0 */
+ 237 0102 A82F      		mov r26,r24
+ 238 0104 762F      		mov r23,r22
+ 239               	.LM22:
+ 240 0106 8435      		cpi r24,lo8(84)
+ 241 0108 00F4      		brsh .L20
+ 242               	.LVL30:
+ 243 010a 6033      		cpi r22,lo8(48)
+ 244 010c 00F4      		brsh .L20
+ 245               	.LVL31:
+ 246 010e 562F      		mov r21,r22
+ 247 0110 5695      		lsr r21
+ 248 0112 5695      		lsr r21
+ 249 0114 5695      		lsr r21
+ 250 0116 90E0      		ldi r25,lo8(0)
+ 251               	.LVL32:
+ 252 0118 262F      		mov r18,r22
+ 253 011a 30E0      		ldi r19,lo8(0)
+ 254               	.LVL33:
+ 255               	.LM23:
+ 256 011c 4423      		tst r20
+ 257 011e 01F0      		breq .L18
+ 258               	.LVL34:
+ 259               	.LM24:
+ 260 0120 E4E5      		ldi r30,lo8(84)
+ 261 0122 5E9F      		mul r21,r30
+ 262 0124 F001      		movw r30,r0
+ 263 0126 1124      		clr r1
+ 264 0128 E80F      		add r30,r24
+ 265 012a F91F      		adc r31,r25
+ 266 012c E050      		subi r30,lo8(-(glcd_buffer))
+ 267 012e F040      		sbci r31,hi8(-(glcd_buffer))
+ 268 0130 2770      		andi r18,lo8(7)
+ 269 0132 3070      		andi r19,hi8(7)
+ 270               	.LVL35:
+ 271 0134 81E0      		ldi r24,lo8(1)
+ 272 0136 90E0      		ldi r25,hi8(1)
+ 273               	.LVL36:
+ 274 0138 00C0      		rjmp 2f
+ 275 013a 880F      	1:	lsl r24
+ 276 013c 991F      		rol r25
+ 277 013e 2A95      	2:	dec r18
+ 278 0140 02F4      		brpl 1b
+ 279 0142 2081      		ld r18,Z
+ 280               	.LVL37:
+ 281 0144 282B      		or r18,r24
+ 282 0146 00C0      		rjmp .L21
+ 283               	.LVL38:
+ 284               	.L18:
+ 285               	.LM25:
+ 286 0148 E4E5      		ldi r30,lo8(84)
+ 287 014a 5E9F      		mul r21,r30
+ 288 014c F001      		movw r30,r0
+ 289 014e 1124      		clr r1
+ 290 0150 E80F      		add r30,r24
+ 291 0152 F91F      		adc r31,r25
+ 292 0154 E050      		subi r30,lo8(-(glcd_buffer))
+ 293 0156 F040      		sbci r31,hi8(-(glcd_buffer))
+ 294 0158 2770      		andi r18,lo8(7)
+ 295 015a 3070      		andi r19,hi8(7)
+ 296               	.LVL39:
+ 297 015c 81E0      		ldi r24,lo8(1)
+ 298 015e 90E0      		ldi r25,hi8(1)
+ 299               	.LVL40:
+ 300 0160 00C0      		rjmp 2f
+ 301 0162 880F      	1:	lsl r24
+ 302 0164 991F      		rol r25
+ 303 0166 2A95      	2:	dec r18
+ 304 0168 02F4      		brpl 1b
+ 305 016a 8095      		com r24
+ 306 016c 2081      		ld r18,Z
+ 307               	.LVL41:
+ 308 016e 2823      		and r18,r24
+ 309               	.L21:
+ 310 0170 2083      		st Z,r18
+ 311               	.LM26:
+ 312 0172 8A2F      		mov r24,r26
+ 313 0174 672F      		mov r22,r23
+ 314               	.LVL42:
+ 315 0176 4A2F      		mov r20,r26
+ 316               	.LVL43:
+ 317 0178 272F      		mov r18,r23
+ 318 017a 0E94 0000 		call glcd_update_bbox
+ 319               	.LVL44:
+ 320               	.L20:
+ 321 017e 0895      		ret
+ 322               	.LFE7:
+ 324               	.global	glcd_fill_circle
+ 326               	glcd_fill_circle:
+ 327               	.LFB16:
+ 328               	.LM27:
+ 329               	.LVL45:
+ 330 0180 3F92      		push r3
+ 331 0182 4F92      		push r4
+ 332 0184 5F92      		push r5
+ 333 0186 6F92      		push r6
+ 334 0188 7F92      		push r7
+ 335 018a 8F92      		push r8
+ 336 018c 9F92      		push r9
+ 337 018e AF92      		push r10
+ 338 0190 BF92      		push r11
+ 339 0192 CF92      		push r12
+ 340 0194 DF92      		push r13
+ 341 0196 EF92      		push r14
+ 342 0198 FF92      		push r15
+ 343 019a 0F93      		push r16
+ 344 019c 1F93      		push r17
+ 345 019e DF93      		push r29
+ 346 01a0 CF93      		push r28
+ 347 01a2 00D0      		rcall .
+ 348 01a4 00D0      		rcall .
+ 349 01a6 00D0      		rcall .
+ 350 01a8 CDB7      		in r28,__SP_L__
+ 351 01aa DEB7      		in r29,__SP_H__
+ 352               	/* prologue: function */
+ 353               	/* frame size = 6 */
+ 354 01ac B82E      		mov r11,r24
+ 355 01ae E62E      		mov r14,r22
+ 356 01b0 F42E      		mov r15,r20
+ 357 01b2 622E      		mov r6,r18
+ 358               	.LM28:
+ 359 01b4 042F      		mov r16,r20
+ 360 01b6 10E0      		ldi r17,lo8(0)
+ 361               	.LM29:
+ 362 01b8 641B      		sub r22,r20
+ 363               	.LVL46:
+ 364 01ba 480F      		add r20,r24
+ 365               	.LVL47:
+ 366 01bc 2F2D      		mov r18,r15
+ 367               	.LVL48:
+ 368 01be 2E0D      		add r18,r14
+ 369 01c0 8F19      		sub r24,r15
+ 370               	.LVL49:
+ 371 01c2 0E94 0000 		call glcd_update_bbox
+ 372               	.LM30:
+ 373 01c6 8E2C      		mov r8,r14
+ 374 01c8 9924      		clr r9
+ 375 01ca 2401      		movw r4,r8
+ 376               	.LVL50:
+ 377 01cc 401A      		sub r4,r16
+ 378 01ce 510A      		sbc r5,r17
+ 379 01d0 6801      		movw r12,r16
+ 380 01d2 C80C      		add r12,r8
+ 381 01d4 D91C      		adc r13,r9
+ 382 01d6 00C0      		rjmp .L23
+ 383               	.L24:
+ 384               	.LM31:
+ 385 01d8 8B2D      		mov r24,r11
+ 386 01da 642D      		mov r22,r4
+ 387 01dc 462D      		mov r20,r6
+ 388 01de 0E94 0000 		call glcd_set_pixel
+ 389               	.LM32:
+ 390 01e2 0894      		sec
+ 391 01e4 411C      		adc r4,__zero_reg__
+ 392 01e6 511C      		adc r5,__zero_reg__
+ 393               	.L23:
+ 394 01e8 C414      		cp r12,r4
+ 395 01ea D504      		cpc r13,r5
+ 396 01ec 04F4      		brge .L24
+ 397               	.LM33:
+ 398 01ee DD24      		clr r13
+ 399 01f0 D394      		inc r13
+ 400               	.LVL51:
+ 401 01f2 DF18      		sub r13,r15
+ 402               	.LM34:
+ 403 01f4 000F      		lsl r16
+ 404 01f6 111F      		rol r17
+ 405 01f8 402E      		mov r4,r16
+ 406               	.LVL52:
+ 407 01fa 4194      		neg r4
+ 408               	.LM35:
+ 409 01fc CF2C      		mov r12,r15
+ 410               	.LVL53:
+ 411 01fe AA24      		clr r10
+ 412               	.LVL54:
+ 413 0200 00E0      		ldi r16,lo8(0)
+ 414 0202 10E0      		ldi r17,hi8(0)
+ 415 0204 83E0      		ldi r24,lo8(3)
+ 416 0206 782E      		mov r7,r24
+ 417               	.LM36:
+ 418 0208 8E2D      		mov r24,r14
+ 419 020a 90E0      		ldi r25,lo8(0)
+ 420 020c 9C01      		movw r18,r24
+ 421 020e 2150      		subi r18,lo8(-(-1))
+ 422 0210 3040      		sbci r19,hi8(-(-1))
+ 423 0212 3A83      		std Y+2,r19
+ 424 0214 2983      		std Y+1,r18
+ 425               	.LM37:
+ 426 0216 FC01      		movw r30,r24
+ 427 0218 3196      		adiw r30,1
+ 428 021a FC83      		std Y+4,r31
+ 429 021c EB83      		std Y+3,r30
+ 430 021e 00C0      		rjmp .L25
+ 431               	.LVL55:
+ 432               	.L31:
+ 433               	.LM38:
+ 434 0220 D7FC      		sbrc r13,7
+ 435 0222 00C0      		rjmp .L26
+ 436               	.LM39:
+ 437 0224 CA94      		dec r12
+ 438               	.LM40:
+ 439 0226 F2E0      		ldi r31,lo8(2)
+ 440 0228 4F0E      		add r4,r31
+ 441               	.LM41:
+ 442 022a D40C      		add r13,r4
+ 443               	.L26:
+ 444               	.LM42:
+ 445 022c A394      		inc r10
+ 446               	.LM43:
+ 447 022e 8C2D      		mov r24,r12
+ 448 0230 9927      		clr r25
+ 449 0232 87FD      		sbrc r24,7
+ 450 0234 9095      		com r25
+ 451 0236 9401      		movw r18,r8
+ 452 0238 281B      		sub r18,r24
+ 453 023a 390B      		sbc r19,r25
+ 454 023c 3E83      		std Y+6,r19
+ 455 023e 2D83      		std Y+5,r18
+ 456               	.LVL56:
+ 457 0240 7C01      		movw r14,r24
+ 458               	.LVL57:
+ 459 0242 E80C      		add r14,r8
+ 460 0244 F91C      		adc r15,r9
+ 461               	.LM44:
+ 462 0246 3A2C      		mov r3,r10
+ 463 0248 3B0C      		add r3,r11
+ 464               	.LM45:
+ 465 024a 5B2C      		mov r5,r11
+ 466 024c 5A18      		sub r5,r10
+ 467 024e 00C0      		rjmp .L27
+ 468               	.L28:
+ 469               	.LM46:
+ 470 0250 832D      		mov r24,r3
+ 471 0252 6D81      		ldd r22,Y+5
+ 472 0254 462D      		mov r20,r6
+ 473 0256 0E94 0000 		call glcd_set_pixel
+ 474               	.LM47:
+ 475 025a 852D      		mov r24,r5
+ 476 025c 6D81      		ldd r22,Y+5
+ 477 025e 462D      		mov r20,r6
+ 478 0260 0E94 0000 		call glcd_set_pixel
+ 479               	.LM48:
+ 480 0264 8D81      		ldd r24,Y+5
+ 481 0266 9E81      		ldd r25,Y+6
+ 482 0268 0196      		adiw r24,1
+ 483 026a 9E83      		std Y+6,r25
+ 484 026c 8D83      		std Y+5,r24
+ 485               	.LVL58:
+ 486               	.L27:
+ 487 026e ED81      		ldd r30,Y+5
+ 488 0270 FE81      		ldd r31,Y+6
+ 489 0272 EE16      		cp r14,r30
+ 490 0274 FF06      		cpc r15,r31
+ 491 0276 04F4      		brge .L28
+ 492               	.LM49:
+ 493 0278 2981      		ldd r18,Y+1
+ 494 027a 3A81      		ldd r19,Y+2
+ 495 027c 201B      		sub r18,r16
+ 496 027e 310B      		sbc r19,r17
+ 497 0280 3E83      		std Y+6,r19
+ 498 0282 2D83      		std Y+5,r18
+ 499               	.LVL59:
+ 500               	.LM50:
+ 501 0284 EB80      		ldd r14,Y+3
+ 502 0286 FC80      		ldd r15,Y+4
+ 503 0288 E00E      		add r14,r16
+ 504 028a F11E      		adc r15,r17
+ 505               	.LM51:
+ 506 028c 3C2C      		mov r3,r12
+ 507 028e 3B0C      		add r3,r11
+ 508               	.LM52:
+ 509 0290 5B2C      		mov r5,r11
+ 510 0292 5C18      		sub r5,r12
+ 511 0294 00C0      		rjmp .L29
+ 512               	.L30:
+ 513               	.LM53:
+ 514 0296 832D      		mov r24,r3
+ 515 0298 6D81      		ldd r22,Y+5
+ 516 029a 462D      		mov r20,r6
+ 517 029c 0E94 0000 		call glcd_set_pixel
+ 518               	.LM54:
+ 519 02a0 852D      		mov r24,r5
+ 520 02a2 6D81      		ldd r22,Y+5
+ 521 02a4 462D      		mov r20,r6
+ 522 02a6 0E94 0000 		call glcd_set_pixel
+ 523               	.LM55:
+ 524 02aa 8D81      		ldd r24,Y+5
+ 525 02ac 9E81      		ldd r25,Y+6
+ 526 02ae 0196      		adiw r24,1
+ 527 02b0 9E83      		std Y+6,r25
+ 528 02b2 8D83      		std Y+5,r24
+ 529               	.LVL60:
+ 530               	.L29:
+ 531 02b4 ED81      		ldd r30,Y+5
+ 532 02b6 FE81      		ldd r31,Y+6
+ 533 02b8 EE16      		cp r14,r30
+ 534 02ba FF06      		cpc r15,r31
+ 535 02bc 04F4      		brge .L30
+ 536               	.LM56:
+ 537 02be D70C      		add r13,r7
+ 538 02c0 0F5F      		subi r16,lo8(-(1))
+ 539 02c2 1F4F      		sbci r17,hi8(-(1))
+ 540 02c4 F2E0      		ldi r31,lo8(2)
+ 541 02c6 7F0E      		add r7,r31
+ 542               	.LVL61:
+ 543               	.L25:
+ 544               	.LM57:
+ 545 02c8 AC14      		cp r10,r12
+ 546 02ca 04F4      		brge .+2
+ 547 02cc 00C0      		rjmp .L31
+ 548               	/* epilogue start */
+ 549               	.LM58:
+ 550 02ce 2696      		adiw r28,6
+ 551 02d0 0FB6      		in __tmp_reg__,__SREG__
+ 552 02d2 F894      		cli
+ 553 02d4 DEBF      		out __SP_H__,r29
+ 554 02d6 0FBE      		out __SREG__,__tmp_reg__
+ 555 02d8 CDBF      		out __SP_L__,r28
+ 556 02da CF91      		pop r28
+ 557 02dc DF91      		pop r29
+ 558 02de 1F91      		pop r17
+ 559 02e0 0F91      		pop r16
+ 560 02e2 FF90      		pop r15
+ 561               	.LVL62:
+ 562 02e4 EF90      		pop r14
+ 563               	.LVL63:
+ 564 02e6 DF90      		pop r13
+ 565               	.LVL64:
+ 566 02e8 CF90      		pop r12
+ 567               	.LVL65:
+ 568 02ea BF90      		pop r11
+ 569               	.LVL66:
+ 570 02ec AF90      		pop r10
+ 571               	.LVL67:
+ 572 02ee 9F90      		pop r9
+ 573 02f0 8F90      		pop r8
+ 574 02f2 7F90      		pop r7
+ 575 02f4 6F90      		pop r6
+ 576               	.LVL68:
+ 577 02f6 5F90      		pop r5
+ 578 02f8 4F90      		pop r4
+ 579               	.LVL69:
+ 580 02fa 3F90      		pop r3
+ 581 02fc 0895      		ret
+ 582               	.LFE16:
+ 584               	.global	glcd_draw_circle
+ 586               	glcd_draw_circle:
+ 587               	.LFB15:
+ 588               	.LM59:
+ 589               	.LVL70:
+ 590 02fe 7F92      		push r7
+ 591 0300 8F92      		push r8
+ 592 0302 9F92      		push r9
+ 593 0304 AF92      		push r10
+ 594 0306 BF92      		push r11
+ 595 0308 CF92      		push r12
+ 596 030a DF92      		push r13
+ 597 030c EF92      		push r14
+ 598 030e FF92      		push r15
+ 599 0310 0F93      		push r16
+ 600 0312 1F93      		push r17
+ 601               	/* prologue: function */
+ 602               	/* frame size = 0 */
+ 603 0314 A82E      		mov r10,r24
+ 604 0316 B62E      		mov r11,r22
+ 605 0318 C22E      		mov r12,r18
+ 606               	.LM60:
+ 607 031a 9924      		clr r9
+ 608 031c 9394      		inc r9
+ 609               	.LVL71:
+ 610 031e 941A      		sub r9,r20
+ 611               	.LM61:
+ 612 0320 842F      		mov r24,r20
+ 613               	.LVL72:
+ 614 0322 90E0      		ldi r25,lo8(0)
+ 615               	.LVL73:
+ 616 0324 880F      		lsl r24
+ 617 0326 991F      		rol r25
+ 618               	.LVL74:
+ 619 0328 782E      		mov r7,r24
+ 620               	.LVL75:
+ 621 032a 7194      		neg r7
+ 622               	.LM62:
+ 623 032c D42E      		mov r13,r20
+ 624               	.LVL76:
+ 625               	.LM63:
+ 626 032e EA2C      		mov r14,r10
+ 627 0330 E41A      		sub r14,r20
+ 628 0332 062F      		mov r16,r22
+ 629 0334 041B      		sub r16,r20
+ 630 0336 F42E      		mov r15,r20
+ 631 0338 FA0C      		add r15,r10
+ 632 033a 142F      		mov r17,r20
+ 633 033c 160F      		add r17,r22
+ 634 033e 8E2D      		mov r24,r14
+ 635 0340 602F      		mov r22,r16
+ 636               	.LVL77:
+ 637 0342 4F2D      		mov r20,r15
+ 638               	.LVL78:
+ 639 0344 212F      		mov r18,r17
+ 640               	.LVL79:
+ 641 0346 0E94 0000 		call glcd_update_bbox
+ 642               	.LVL80:
+ 643               	.LM64:
+ 644 034a 8A2D      		mov r24,r10
+ 645 034c 612F      		mov r22,r17
+ 646 034e 4C2D      		mov r20,r12
+ 647 0350 0E94 0000 		call glcd_set_pixel
+ 648               	.LM65:
+ 649 0354 8A2D      		mov r24,r10
+ 650 0356 602F      		mov r22,r16
+ 651 0358 4C2D      		mov r20,r12
+ 652 035a 0E94 0000 		call glcd_set_pixel
+ 653               	.LM66:
+ 654 035e 8F2D      		mov r24,r15
+ 655 0360 6B2D      		mov r22,r11
+ 656 0362 4C2D      		mov r20,r12
+ 657 0364 0E94 0000 		call glcd_set_pixel
+ 658               	.LM67:
+ 659 0368 8E2D      		mov r24,r14
+ 660 036a 6B2D      		mov r22,r11
+ 661 036c 4C2D      		mov r20,r12
+ 662 036e 0E94 0000 		call glcd_set_pixel
+ 663 0372 EE24      		clr r14
+ 664               	.LVL81:
+ 665 0374 23E0      		ldi r18,lo8(3)
+ 666 0376 822E      		mov r8,r18
+ 667 0378 00C0      		rjmp .L34
+ 668               	.L36:
+ 669               	.LM68:
+ 670 037a 97FC      		sbrc r9,7
+ 671 037c 00C0      		rjmp .L35
+ 672               	.LM69:
+ 673 037e DA94      		dec r13
+ 674               	.LM70:
+ 675 0380 82E0      		ldi r24,lo8(2)
+ 676 0382 780E      		add r7,r24
+ 677               	.LM71:
+ 678 0384 970C      		add r9,r7
+ 679               	.L35:
+ 680               	.LM72:
+ 681 0386 E394      		inc r14
+ 682               	.LM73:
+ 683 0388 980C      		add r9,r8
+ 684               	.LM74:
+ 685 038a FE2C      		mov r15,r14
+ 686 038c FA0C      		add r15,r10
+ 687               	.LM75:
+ 688 038e 1D2D      		mov r17,r13
+ 689 0390 1B0D      		add r17,r11
+ 690 0392 8F2D      		mov r24,r15
+ 691 0394 612F      		mov r22,r17
+ 692 0396 4C2D      		mov r20,r12
+ 693 0398 0E94 0000 		call glcd_set_pixel
+ 694 039c 0A2D      		mov r16,r10
+ 695 039e 0E19      		sub r16,r14
+ 696               	.LM76:
+ 697 03a0 802F      		mov r24,r16
+ 698 03a2 612F      		mov r22,r17
+ 699 03a4 4C2D      		mov r20,r12
+ 700 03a6 0E94 0000 		call glcd_set_pixel
+ 701               	.LM77:
+ 702 03aa 1B2D      		mov r17,r11
+ 703 03ac 1D19      		sub r17,r13
+ 704 03ae 8F2D      		mov r24,r15
+ 705 03b0 612F      		mov r22,r17
+ 706 03b2 4C2D      		mov r20,r12
+ 707 03b4 0E94 0000 		call glcd_set_pixel
+ 708               	.LM78:
+ 709 03b8 802F      		mov r24,r16
+ 710 03ba 612F      		mov r22,r17
+ 711 03bc 4C2D      		mov r20,r12
+ 712 03be 0E94 0000 		call glcd_set_pixel
+ 713               	.LM79:
+ 714 03c2 FD2C      		mov r15,r13
+ 715 03c4 FA0C      		add r15,r10
+ 716 03c6 1E2D      		mov r17,r14
+ 717 03c8 1B0D      		add r17,r11
+ 718 03ca 8F2D      		mov r24,r15
+ 719 03cc 612F      		mov r22,r17
+ 720 03ce 4C2D      		mov r20,r12
+ 721 03d0 0E94 0000 		call glcd_set_pixel
+ 722               	.LM80:
+ 723 03d4 0A2D      		mov r16,r10
+ 724 03d6 0D19      		sub r16,r13
+ 725 03d8 802F      		mov r24,r16
+ 726 03da 612F      		mov r22,r17
+ 727 03dc 4C2D      		mov r20,r12
+ 728 03de 0E94 0000 		call glcd_set_pixel
+ 729 03e2 1B2D      		mov r17,r11
+ 730 03e4 1E19      		sub r17,r14
+ 731               	.LM81:
+ 732 03e6 8F2D      		mov r24,r15
+ 733 03e8 612F      		mov r22,r17
+ 734 03ea 4C2D      		mov r20,r12
+ 735 03ec 0E94 0000 		call glcd_set_pixel
+ 736               	.LM82:
+ 737 03f0 802F      		mov r24,r16
+ 738 03f2 612F      		mov r22,r17
+ 739 03f4 4C2D      		mov r20,r12
+ 740 03f6 0E94 0000 		call glcd_set_pixel
+ 741 03fa 82E0      		ldi r24,lo8(2)
+ 742 03fc 880E      		add r8,r24
+ 743               	.L34:
+ 744               	.LM83:
+ 745 03fe ED14      		cp r14,r13
+ 746 0400 04F4      		brge .+2
+ 747 0402 00C0      		rjmp .L36
+ 748               	/* epilogue start */
+ 749               	.LM84:
+ 750 0404 1F91      		pop r17
+ 751 0406 0F91      		pop r16
+ 752 0408 FF90      		pop r15
+ 753 040a EF90      		pop r14
+ 754               	.LVL82:
+ 755 040c DF90      		pop r13
+ 756               	.LVL83:
+ 757 040e CF90      		pop r12
+ 758               	.LVL84:
+ 759 0410 BF90      		pop r11
+ 760               	.LVL85:
+ 761 0412 AF90      		pop r10
+ 762               	.LVL86:
+ 763 0414 9F90      		pop r9
+ 764               	.LVL87:
+ 765 0416 8F90      		pop r8
+ 766 0418 7F90      		pop r7
+ 767               	.LVL88:
+ 768 041a 0895      		ret
+ 769               	.LFE15:
+ 771               	.global	glcd_draw_rect_thick
+ 773               	glcd_draw_rect_thick:
+ 774               	.LFB13:
+ 775               	.LM85:
+ 776               	.LVL89:
+ 777 041c 2F92      		push r2
+ 778 041e 3F92      		push r3
+ 779 0420 4F92      		push r4
+ 780 0422 5F92      		push r5
+ 781 0424 6F92      		push r6
+ 782 0426 7F92      		push r7
+ 783 0428 8F92      		push r8
+ 784 042a 9F92      		push r9
+ 785 042c AF92      		push r10
+ 786 042e BF92      		push r11
+ 787 0430 CF92      		push r12
+ 788               	.LVL90:
+ 789 0432 DF92      		push r13
+ 790 0434 EF92      		push r14
+ 791               	.LVL91:
+ 792 0436 FF92      		push r15
+ 793 0438 0F93      		push r16
+ 794               	.LVL92:
+ 795 043a 1F93      		push r17
+ 796 043c DF93      		push r29
+ 797 043e CF93      		push r28
+ 798 0440 00D0      		rcall .
+ 799 0442 0F92      		push __tmp_reg__
+ 800 0444 CDB7      		in r28,__SP_L__
+ 801 0446 DEB7      		in r29,__SP_H__
+ 802               	/* prologue: function */
+ 803               	/* frame size = 3 */
+ 804 0448 B82E      		mov r11,r24
+ 805 044a A62E      		mov r10,r22
+ 806 044c 442E      		mov r4,r20
+ 807 044e 2983      		std Y+1,r18
+ 808 0450 902E      		mov r9,r16
+ 809               	.LVL93:
+ 810 0452 8E2D      		mov r24,r14
+ 811               	.LVL94:
+ 812 0454 5C2C      		mov r5,r12
+ 813               	.LVL95:
+ 814               	.LM86:
+ 815 0456 0023      		tst r16
+ 816 0458 01F4      		brne .L39
+ 817               	.LVL96:
+ 818 045a 9924      		clr r9
+ 819 045c 9394      		inc r9
+ 820               	.LVL97:
+ 821               	.L39:
+ 822               	.LM87:
+ 823 045e 8823      		tst r24
+ 824 0460 01F4      		brne .L40
+ 825 0462 81E0      		ldi r24,lo8(1)
+ 826               	.LVL98:
+ 827               	.L40:
+ 828               	.LM88:
+ 829 0464 00E0      		ldi r16,lo8(0)
+ 830 0466 10E0      		ldi r17,hi8(0)
+ 831 0468 CB2C      		mov r12,r11
+ 832 046a DD24      		clr r13
+ 833               	.LVL99:
+ 834 046c 1601      		movw r2,r12
+ 835 046e 240C      		add r2,r4
+ 836 0470 311C      		adc r3,__zero_reg__
+ 837 0472 8980      		ldd r8,Y+1
+ 838 0474 8A0C      		add r8,r10
+ 839               	.LM89:
+ 840 0476 682E      		mov r6,r24
+ 841 0478 7724      		clr r7
+ 842               	.LVL100:
+ 843 047a 00C0      		rjmp .L41
+ 844               	.LVL101:
+ 845               	.L42:
+ 846               	.LM90:
+ 847 047c 6A81      		ldd r22,Y+2
+ 848 047e 6A0D      		add r22,r10
+ 849 0480 8E2D      		mov r24,r14
+ 850 0482 452D      		mov r20,r5
+ 851 0484 0E94 0000 		call glcd_set_pixel
+ 852               	.LM91:
+ 853 0488 8E2D      		mov r24,r14
+ 854 048a 6F2D      		mov r22,r15
+ 855 048c 452D      		mov r20,r5
+ 856 048e 0E94 0000 		call glcd_set_pixel
+ 857               	.LM92:
+ 858 0492 8A81      		ldd r24,Y+2
+ 859 0494 9B81      		ldd r25,Y+3
+ 860 0496 0196      		adiw r24,1
+ 861 0498 9B83      		std Y+3,r25
+ 862 049a 8A83      		std Y+2,r24
+ 863               	.LVL102:
+ 864               	.L44:
+ 865 049c FA94      		dec r15
+ 866 049e EA81      		ldd r30,Y+2
+ 867 04a0 FB81      		ldd r31,Y+3
+ 868 04a2 E615      		cp r30,r6
+ 869 04a4 F705      		cpc r31,r7
+ 870 04a6 04F0      		brlt .L42
+ 871 04a8 0F5F      		subi r16,lo8(-(1))
+ 872 04aa 1F4F      		sbci r17,hi8(-(1))
+ 873               	.LVL103:
+ 874               	.L41:
+ 875               	.LM93:
+ 876 04ac C801      		movw r24,r16
+ 877 04ae 8C0D      		add r24,r12
+ 878 04b0 9D1D      		adc r25,r13
+ 879 04b2 8215      		cp r24,r2
+ 880 04b4 9305      		cpc r25,r3
+ 881 04b6 04F4      		brge .L43
+ 882               	.LVL104:
+ 883 04b8 F82C      		mov r15,r8
+ 884 04ba 1B82      		std Y+3,__zero_reg__
+ 885 04bc 1A82      		std Y+2,__zero_reg__
+ 886               	.LVL105:
+ 887 04be EB2C      		mov r14,r11
+ 888 04c0 E00E      		add r14,r16
+ 889 04c2 00C0      		rjmp .L44
+ 890               	.LVL106:
+ 891               	.L43:
+ 892               	.LM94:
+ 893 04c4 00E0      		ldi r16,lo8(0)
+ 894 04c6 10E0      		ldi r17,hi8(0)
+ 895 04c8 CA2C      		mov r12,r10
+ 896               	.LVL107:
+ 897 04ca DD24      		clr r13
+ 898               	.LVL108:
+ 899 04cc 3601      		movw r6,r12
+ 900               	.LVL109:
+ 901 04ce F981      		ldd r31,Y+1
+ 902 04d0 6F0E      		add r6,r31
+ 903 04d2 711C      		adc r7,__zero_reg__
+ 904 04d4 342C      		mov r3,r4
+ 905 04d6 3B0C      		add r3,r11
+ 906               	.LM95:
+ 907 04d8 892C      		mov r8,r9
+ 908 04da 9924      		clr r9
+ 909               	.LVL110:
+ 910 04dc 00C0      		rjmp .L45
+ 911               	.LVL111:
+ 912               	.L46:
+ 913               	.LM96:
+ 914 04de 8A81      		ldd r24,Y+2
+ 915 04e0 8B0D      		add r24,r11
+ 916 04e2 6F2D      		mov r22,r15
+ 917 04e4 452D      		mov r20,r5
+ 918 04e6 0E94 0000 		call glcd_set_pixel
+ 919               	.LM97:
+ 920 04ea 8E2D      		mov r24,r14
+ 921 04ec 6F2D      		mov r22,r15
+ 922 04ee 452D      		mov r20,r5
+ 923 04f0 0E94 0000 		call glcd_set_pixel
+ 924               	.LM98:
+ 925 04f4 8A81      		ldd r24,Y+2
+ 926 04f6 9B81      		ldd r25,Y+3
+ 927 04f8 0196      		adiw r24,1
+ 928 04fa 9B83      		std Y+3,r25
+ 929 04fc 8A83      		std Y+2,r24
+ 930               	.LVL112:
+ 931               	.L48:
+ 932 04fe EA94      		dec r14
+ 933 0500 EA81      		ldd r30,Y+2
+ 934 0502 FB81      		ldd r31,Y+3
+ 935 0504 E815      		cp r30,r8
+ 936 0506 F905      		cpc r31,r9
+ 937 0508 04F0      		brlt .L46
+ 938 050a 0F5F      		subi r16,lo8(-(1))
+ 939 050c 1F4F      		sbci r17,hi8(-(1))
+ 940               	.LVL113:
+ 941               	.L45:
+ 942               	.LM99:
+ 943 050e C801      		movw r24,r16
+ 944 0510 8C0D      		add r24,r12
+ 945 0512 9D1D      		adc r25,r13
+ 946 0514 8615      		cp r24,r6
+ 947 0516 9705      		cpc r25,r7
+ 948 0518 04F4      		brge .L47
+ 949               	.LVL114:
+ 950 051a E32C      		mov r14,r3
+ 951               	.LVL115:
+ 952 051c 1B82      		std Y+3,__zero_reg__
+ 953 051e 1A82      		std Y+2,__zero_reg__
+ 954               	.LVL116:
+ 955 0520 FA2C      		mov r15,r10
+ 956 0522 F00E      		add r15,r16
+ 957 0524 00C0      		rjmp .L48
+ 958               	.LVL117:
+ 959               	.L47:
+ 960               	.LM100:
+ 961 0526 4B2D      		mov r20,r11
+ 962 0528 4150      		subi r20,lo8(-(-1))
+ 963 052a 440D      		add r20,r4
+ 964 052c 2A2D      		mov r18,r10
+ 965 052e 2150      		subi r18,lo8(-(-1))
+ 966 0530 F981      		ldd r31,Y+1
+ 967 0532 2F0F      		add r18,r31
+ 968 0534 8B2D      		mov r24,r11
+ 969 0536 6A2D      		mov r22,r10
+ 970 0538 0E94 0000 		call glcd_update_bbox
+ 971               	/* epilogue start */
+ 972               	.LM101:
+ 973 053c 0F90      		pop __tmp_reg__
+ 974 053e 0F90      		pop __tmp_reg__
+ 975 0540 0F90      		pop __tmp_reg__
+ 976 0542 CF91      		pop r28
+ 977 0544 DF91      		pop r29
+ 978 0546 1F91      		pop r17
+ 979 0548 0F91      		pop r16
+ 980 054a FF90      		pop r15
+ 981 054c EF90      		pop r14
+ 982               	.LVL118:
+ 983 054e DF90      		pop r13
+ 984               	.LVL119:
+ 985 0550 CF90      		pop r12
+ 986               	.LVL120:
+ 987 0552 BF90      		pop r11
+ 988               	.LVL121:
+ 989 0554 AF90      		pop r10
+ 990               	.LVL122:
+ 991 0556 9F90      		pop r9
+ 992               	.LVL123:
+ 993 0558 8F90      		pop r8
+ 994               	.LVL124:
+ 995 055a 7F90      		pop r7
+ 996               	.LVL125:
+ 997 055c 6F90      		pop r6
+ 998 055e 5F90      		pop r5
+ 999               	.LVL126:
+ 1000 0560 4F90      		pop r4
+ 1001               	.LVL127:
+ 1002 0562 3F90      		pop r3
+ 1003 0564 2F90      		pop r2
+ 1004 0566 0895      		ret
+ 1005               	.LFE13:
+ 1007               	.global	glcd_draw_rect
+ 1009               	glcd_draw_rect:
+ 1010               	.LFB12:
+ 1011               	.LM102:
+ 1012               	.LVL128:
+ 1013 0568 6F92      		push r6
+ 1014 056a 7F92      		push r7
+ 1015 056c 8F92      		push r8
+ 1016 056e 9F92      		push r9
+ 1017 0570 AF92      		push r10
+ 1018 0572 BF92      		push r11
+ 1019 0574 CF92      		push r12
+ 1020 0576 DF92      		push r13
+ 1021 0578 EF92      		push r14
+ 1022 057a FF92      		push r15
+ 1023 057c 0F93      		push r16
+ 1024               	.LVL129:
+ 1025 057e 1F93      		push r17
+ 1026 0580 CF93      		push r28
+ 1027 0582 DF93      		push r29
+ 1028               	/* prologue: function */
+ 1029               	/* frame size = 0 */
+ 1030 0584 E82E      		mov r14,r24
+ 1031 0586 F62E      		mov r15,r22
+ 1032 0588 A42E      		mov r10,r20
+ 1033 058a 722E      		mov r7,r18
+ 1034 058c B02E      		mov r11,r16
+ 1035               	.LVL130:
+ 1036               	.LM103:
+ 1037 058e C0E0      		ldi r28,lo8(0)
+ 1038 0590 D0E0      		ldi r29,hi8(0)
+ 1039 0592 C82E      		mov r12,r24
+ 1040 0594 DD24      		clr r13
+ 1041               	.LVL131:
+ 1042 0596 4601      		movw r8,r12
+ 1043 0598 840E      		add r8,r20
+ 1044 059a 911C      		adc r9,__zero_reg__
+ 1045               	.LM104:
+ 1046 059c FA94      		dec r15
+ 1047               	.LVL132:
+ 1048 059e 0F2D      		mov r16,r15
+ 1049               	.LVL133:
+ 1050 05a0 020F      		add r16,r18
+ 1051 05a2 F394      		inc r15
+ 1052 05a4 00C0      		rjmp .L51
+ 1053               	.LVL134:
+ 1054               	.L52:
+ 1055               	.LM105:
+ 1056 05a6 1E2D      		mov r17,r14
+ 1057 05a8 1C0F      		add r17,r28
+ 1058               	.LM106:
+ 1059 05aa 812F      		mov r24,r17
+ 1060 05ac 6F2D      		mov r22,r15
+ 1061 05ae 4B2D      		mov r20,r11
+ 1062               	.LVL135:
+ 1063 05b0 0E94 0000 		call glcd_set_pixel
+ 1064               	.LVL136:
+ 1065               	.LM107:
+ 1066 05b4 812F      		mov r24,r17
+ 1067 05b6 602F      		mov r22,r16
+ 1068 05b8 4B2D      		mov r20,r11
+ 1069 05ba 0E94 0000 		call glcd_set_pixel
+ 1070 05be 2196      		adiw r28,1
+ 1071               	.LVL137:
+ 1072               	.L51:
+ 1073               	.LM108:
+ 1074 05c0 CE01      		movw r24,r28
+ 1075 05c2 8C0D      		add r24,r12
+ 1076 05c4 9D1D      		adc r25,r13
+ 1077 05c6 8815      		cp r24,r8
+ 1078 05c8 9905      		cpc r25,r9
+ 1079 05ca 04F0      		brlt .L52
+ 1080               	.LVL138:
+ 1081               	.LM109:
+ 1082 05cc C0E0      		ldi r28,lo8(0)
+ 1083 05ce D0E0      		ldi r29,hi8(0)
+ 1084 05d0 CF2C      		mov r12,r15
+ 1085               	.LVL139:
+ 1086 05d2 DD24      		clr r13
+ 1087               	.LVL140:
+ 1088 05d4 4601      		movw r8,r12
+ 1089 05d6 870C      		add r8,r7
+ 1090 05d8 911C      		adc r9,__zero_reg__
+ 1091 05da 0E2D      		mov r16,r14
+ 1092 05dc 0150      		subi r16,lo8(-(-1))
+ 1093               	.LM110:
+ 1094 05de 602E      		mov r6,r16
+ 1095 05e0 6A0C      		add r6,r10
+ 1096 05e2 00C0      		rjmp .L53
+ 1097               	.LVL141:
+ 1098               	.L54:
+ 1099               	.LM111:
+ 1100 05e4 1F2D      		mov r17,r15
+ 1101 05e6 1C0F      		add r17,r28
+ 1102               	.LM112:
+ 1103 05e8 8E2D      		mov r24,r14
+ 1104 05ea 612F      		mov r22,r17
+ 1105 05ec 4B2D      		mov r20,r11
+ 1106 05ee 0E94 0000 		call glcd_set_pixel
+ 1107               	.LM113:
+ 1108 05f2 862D      		mov r24,r6
+ 1109 05f4 612F      		mov r22,r17
+ 1110 05f6 4B2D      		mov r20,r11
+ 1111 05f8 0E94 0000 		call glcd_set_pixel
+ 1112 05fc 2196      		adiw r28,1
+ 1113               	.LVL142:
+ 1114               	.L53:
+ 1115               	.LM114:
+ 1116 05fe CE01      		movw r24,r28
+ 1117 0600 8C0D      		add r24,r12
+ 1118 0602 9D1D      		adc r25,r13
+ 1119 0604 8815      		cp r24,r8
+ 1120 0606 9905      		cpc r25,r9
+ 1121 0608 04F0      		brlt .L54
+ 1122               	.LVL143:
+ 1123               	.LM115:
+ 1124 060a 0A0D      		add r16,r10
+ 1125 060c 2F2D      		mov r18,r15
+ 1126 060e 2150      		subi r18,lo8(-(-1))
+ 1127 0610 270D      		add r18,r7
+ 1128 0612 8E2D      		mov r24,r14
+ 1129 0614 6F2D      		mov r22,r15
+ 1130 0616 402F      		mov r20,r16
+ 1131 0618 0E94 0000 		call glcd_update_bbox
+ 1132               	/* epilogue start */
+ 1133               	.LM116:
+ 1134 061c DF91      		pop r29
+ 1135 061e CF91      		pop r28
+ 1136 0620 1F91      		pop r17
+ 1137 0622 0F91      		pop r16
+ 1138 0624 FF90      		pop r15
+ 1139 0626 EF90      		pop r14
+ 1140               	.LVL144:
+ 1141 0628 DF90      		pop r13
+ 1142               	.LVL145:
+ 1143 062a CF90      		pop r12
+ 1144               	.LVL146:
+ 1145 062c BF90      		pop r11
+ 1146               	.LVL147:
+ 1147 062e AF90      		pop r10
+ 1148               	.LVL148:
+ 1149 0630 9F90      		pop r9
+ 1150 0632 8F90      		pop r8
+ 1151 0634 7F90      		pop r7
+ 1152               	.LVL149:
+ 1153 0636 6F90      		pop r6
+ 1154 0638 0895      		ret
+ 1155               	.LFE12:
+ 1157               	.global	glcd_fill_rect
+ 1159               	glcd_fill_rect:
+ 1160               	.LFB11:
+ 1161               	.LM117:
+ 1162               	.LVL150:
+ 1163 063a 2F92      		push r2
+ 1164 063c 3F92      		push r3
+ 1165 063e 4F92      		push r4
+ 1166 0640 5F92      		push r5
+ 1167 0642 6F92      		push r6
+ 1168 0644 7F92      		push r7
+ 1169 0646 8F92      		push r8
+ 1170 0648 9F92      		push r9
+ 1171 064a AF92      		push r10
+ 1172 064c BF92      		push r11
+ 1173 064e CF92      		push r12
+ 1174 0650 DF92      		push r13
+ 1175 0652 EF92      		push r14
+ 1176 0654 FF92      		push r15
+ 1177 0656 0F93      		push r16
+ 1178               	.LVL151:
+ 1179 0658 1F93      		push r17
+ 1180 065a CF93      		push r28
+ 1181 065c DF93      		push r29
+ 1182               	/* prologue: function */
+ 1183               	/* frame size = 0 */
+ 1184 065e D82E      		mov r13,r24
+ 1185 0660 C62E      		mov r12,r22
+ 1186 0662 442E      		mov r4,r20
+ 1187 0664 322E      		mov r3,r18
+ 1188 0666 202E      		mov r2,r16
+ 1189               	.LVL152:
+ 1190               	.LM118:
+ 1191 0668 00E0      		ldi r16,lo8(0)
+ 1192 066a 10E0      		ldi r17,hi8(0)
+ 1193               	.LVL153:
+ 1194 066c A82E      		mov r10,r24
+ 1195 066e BB24      		clr r11
+ 1196               	.LVL154:
+ 1197 0670 3501      		movw r6,r10
+ 1198 0672 640E      		add r6,r20
+ 1199 0674 711C      		adc r7,__zero_reg__
+ 1200               	.LBB2:
+ 1201               	.LM119:
+ 1202 0676 E62E      		mov r14,r22
+ 1203               	.LVL155:
+ 1204 0678 FF24      		clr r15
+ 1205               	.LVL156:
+ 1206 067a 4701      		movw r8,r14
+ 1207 067c 820E      		add r8,r18
+ 1208 067e 911C      		adc r9,__zero_reg__
+ 1209 0680 00C0      		rjmp .L57
+ 1210               	.LVL157:
+ 1211               	.L60:
+ 1212 0682 C0E0      		ldi r28,lo8(0)
+ 1213 0684 D0E0      		ldi r29,hi8(0)
+ 1214               	.LM120:
+ 1215 0686 5D2C      		mov r5,r13
+ 1216 0688 500E      		add r5,r16
+ 1217 068a 00C0      		rjmp .L58
+ 1218               	.LVL158:
+ 1219               	.L59:
+ 1220 068c 6C2D      		mov r22,r12
+ 1221               	.LVL159:
+ 1222 068e 6C0F      		add r22,r28
+ 1223 0690 852D      		mov r24,r5
+ 1224 0692 422D      		mov r20,r2
+ 1225               	.LVL160:
+ 1226 0694 0E94 0000 		call glcd_set_pixel
+ 1227               	.LVL161:
+ 1228 0698 2196      		adiw r28,1
+ 1229               	.LVL162:
+ 1230               	.L58:
+ 1231               	.LM121:
+ 1232 069a CE01      		movw r24,r28
+ 1233 069c 8E0D      		add r24,r14
+ 1234 069e 9F1D      		adc r25,r15
+ 1235 06a0 8815      		cp r24,r8
+ 1236 06a2 9905      		cpc r25,r9
+ 1237 06a4 04F0      		brlt .L59
+ 1238               	.LVL163:
+ 1239 06a6 0F5F      		subi r16,lo8(-(1))
+ 1240 06a8 1F4F      		sbci r17,hi8(-(1))
+ 1241               	.LVL164:
+ 1242               	.L57:
+ 1243               	.LBE2:
+ 1244               	.LM122:
+ 1245 06aa C801      		movw r24,r16
+ 1246 06ac 8A0D      		add r24,r10
+ 1247 06ae 9B1D      		adc r25,r11
+ 1248 06b0 8615      		cp r24,r6
+ 1249 06b2 9705      		cpc r25,r7
+ 1250 06b4 04F0      		brlt .L60
+ 1251               	.LM123:
+ 1252 06b6 4D2D      		mov r20,r13
+ 1253               	.LVL165:
+ 1254 06b8 4150      		subi r20,lo8(-(-1))
+ 1255 06ba 440D      		add r20,r4
+ 1256 06bc 2C2D      		mov r18,r12
+ 1257               	.LVL166:
+ 1258 06be 2150      		subi r18,lo8(-(-1))
+ 1259 06c0 230D      		add r18,r3
+ 1260 06c2 8D2D      		mov r24,r13
+ 1261 06c4 6C2D      		mov r22,r12
+ 1262               	.LVL167:
+ 1263 06c6 0E94 0000 		call glcd_update_bbox
+ 1264               	/* epilogue start */
+ 1265               	.LM124:
+ 1266 06ca DF91      		pop r29
+ 1267 06cc CF91      		pop r28
+ 1268 06ce 1F91      		pop r17
+ 1269 06d0 0F91      		pop r16
+ 1270 06d2 FF90      		pop r15
+ 1271               	.LVL168:
+ 1272 06d4 EF90      		pop r14
+ 1273               	.LVL169:
+ 1274 06d6 DF90      		pop r13
+ 1275 06d8 CF90      		pop r12
+ 1276               	.LVL170:
+ 1277 06da BF90      		pop r11
+ 1278               	.LVL171:
+ 1279 06dc AF90      		pop r10
+ 1280               	.LVL172:
+ 1281 06de 9F90      		pop r9
+ 1282 06e0 8F90      		pop r8
+ 1283 06e2 7F90      		pop r7
+ 1284 06e4 6F90      		pop r6
+ 1285 06e6 5F90      		pop r5
+ 1286 06e8 4F90      		pop r4
+ 1287               	.LVL173:
+ 1288 06ea 3F90      		pop r3
+ 1289               	.LVL174:
+ 1290 06ec 2F90      		pop r2
+ 1291               	.LVL175:
+ 1292 06ee 0895      		ret
+ 1293               	.LFE11:
+ 1295               	.global	glcd_draw_line
+ 1297               	glcd_draw_line:
+ 1298               	.LFB10:
+ 1299               	.LM125:
+ 1300               	.LVL176:
+ 1301 06f0 9F92      		push r9
+ 1302 06f2 AF92      		push r10
+ 1303 06f4 BF92      		push r11
+ 1304 06f6 CF92      		push r12
+ 1305 06f8 DF92      		push r13
+ 1306 06fa EF92      		push r14
+ 1307 06fc FF92      		push r15
+ 1308 06fe 0F93      		push r16
+ 1309               	.LVL177:
+ 1310 0700 1F93      		push r17
+ 1311               	/* prologue: function */
+ 1312               	/* frame size = 0 */
+ 1313 0702 F82E      		mov r15,r24
+ 1314 0704 E62E      		mov r14,r22
+ 1315 0706 D42E      		mov r13,r20
+ 1316 0708 122F      		mov r17,r18
+ 1317 070a 902E      		mov r9,r16
+ 1318               	.LVL178:
+ 1319               	.LM126:
+ 1320 070c AA24      		clr r10
+ 1321               	.LVL179:
+ 1322 070e 30E0      		ldi r19,lo8(0)
+ 1323 0710 261B      		sub r18,r22
+ 1324 0712 3109      		sbc r19,__zero_reg__
+ 1325               	.LVL180:
+ 1326 0714 37FF      		sbrs r19,7
+ 1327 0716 00C0      		rjmp .L64
+ 1328               	.LVL181:
+ 1329 0718 3095      		com r19
+ 1330 071a 2195      		neg r18
+ 1331 071c 3F4F      		sbci r19,lo8(-1)
+ 1332               	.L64:
+ 1333 071e 8D2D      		mov r24,r13
+ 1334 0720 90E0      		ldi r25,lo8(0)
+ 1335 0722 8F19      		sub r24,r15
+ 1336 0724 9109      		sbc r25,__zero_reg__
+ 1337 0726 97FF      		sbrs r25,7
+ 1338 0728 00C0      		rjmp .L65
+ 1339 072a 9095      		com r25
+ 1340 072c 8195      		neg r24
+ 1341 072e 9F4F      		sbci r25,lo8(-1)
+ 1342               	.L65:
+ 1343 0730 8217      		cp r24,r18
+ 1344 0732 9307      		cpc r25,r19
+ 1345 0734 04F4      		brge .L66
+ 1346 0736 AA24      		clr r10
+ 1347 0738 A394      		inc r10
+ 1348               	.LM127:
+ 1349 073a 8E2D      		mov r24,r14
+ 1350 073c EF2C      		mov r14,r15
+ 1351               	.LVL182:
+ 1352 073e F82E      		mov r15,r24
+ 1353 0740 812F      		mov r24,r17
+ 1354 0742 1D2D      		mov r17,r13
+ 1355 0744 D82E      		mov r13,r24
+ 1356               	.LVL183:
+ 1357               	.L66:
+ 1358               	.LM128:
+ 1359 0746 DF14      		cp r13,r15
+ 1360 0748 00F4      		brsh .L67
+ 1361 074a 8D2D      		mov r24,r13
+ 1362 074c DF2C      		mov r13,r15
+ 1363 074e F82E      		mov r15,r24
+ 1364 0750 812F      		mov r24,r17
+ 1365 0752 1E2D      		mov r17,r14
+ 1366 0754 E82E      		mov r14,r24
+ 1367               	.LVL184:
+ 1368               	.L67:
+ 1369               	.LM129:
+ 1370 0756 8F2D      		mov r24,r15
+ 1371 0758 6E2D      		mov r22,r14
+ 1372 075a 4D2D      		mov r20,r13
+ 1373 075c 212F      		mov r18,r17
+ 1374 075e 0E94 0000 		call glcd_update_bbox
+ 1375               	.LM130:
+ 1376 0762 CD2C      		mov r12,r13
+ 1377               	.LVL185:
+ 1378 0764 CF18      		sub r12,r15
+ 1379               	.LM131:
+ 1380 0766 812F      		mov r24,r17
+ 1381 0768 90E0      		ldi r25,lo8(0)
+ 1382 076a 8E19      		sub r24,r14
+ 1383 076c 9109      		sbc r25,__zero_reg__
+ 1384 076e 97FF      		sbrs r25,7
+ 1385 0770 00C0      		rjmp .L68
+ 1386 0772 9095      		com r25
+ 1387 0774 8195      		neg r24
+ 1388 0776 9F4F      		sbci r25,lo8(-1)
+ 1389               	.L68:
+ 1390 0778 B82E      		mov r11,r24
+ 1391               	.LVL186:
+ 1392               	.LM132:
+ 1393 077a E116      		cp r14,r17
+ 1394 077c 00F0      		brlo .L69
+ 1395 077e 0FEF      		ldi r16,lo8(-1)
+ 1396               	.LVL187:
+ 1397 0780 00C0      		rjmp .L70
+ 1398               	.LVL188:
+ 1399               	.L69:
+ 1400 0782 01E0      		ldi r16,lo8(1)
+ 1401               	.LVL189:
+ 1402               	.L70:
+ 1403               	.LM133:
+ 1404 0784 1C2D      		mov r17,r12
+ 1405               	.LVL190:
+ 1406 0786 1695      		lsr r17
+ 1407 0788 00C0      		rjmp .L71
+ 1408               	.L75:
+ 1409               	.LM134:
+ 1410 078a AA20      		tst r10
+ 1411 078c 01F0      		breq .L72
+ 1412               	.LM135:
+ 1413 078e 8E2D      		mov r24,r14
+ 1414 0790 6F2D      		mov r22,r15
+ 1415 0792 00C0      		rjmp .L77
+ 1416               	.L72:
+ 1417               	.LM136:
+ 1418 0794 8F2D      		mov r24,r15
+ 1419 0796 6E2D      		mov r22,r14
+ 1420               	.L77:
+ 1421 0798 492D      		mov r20,r9
+ 1422 079a 0E94 0000 		call glcd_set_pixel
+ 1423               	.LM137:
+ 1424 079e 1B19      		sub r17,r11
+ 1425               	.LM138:
+ 1426 07a0 17FF      		sbrs r17,7
+ 1427 07a2 00C0      		rjmp .L74
+ 1428               	.LM139:
+ 1429 07a4 E00E      		add r14,r16
+ 1430               	.LM140:
+ 1431 07a6 1C0D      		add r17,r12
+ 1432               	.L74:
+ 1433               	.LM141:
+ 1434 07a8 F394      		inc r15
+ 1435               	.L71:
+ 1436 07aa DF14      		cp r13,r15
+ 1437 07ac 00F4      		brsh .L75
+ 1438               	/* epilogue start */
+ 1439               	.LM142:
+ 1440 07ae 1F91      		pop r17
+ 1441               	.LVL191:
+ 1442 07b0 0F91      		pop r16
+ 1443               	.LVL192:
+ 1444 07b2 FF90      		pop r15
+ 1445               	.LVL193:
+ 1446 07b4 EF90      		pop r14
+ 1447               	.LVL194:
+ 1448 07b6 DF90      		pop r13
+ 1449               	.LVL195:
+ 1450 07b8 CF90      		pop r12
+ 1451               	.LVL196:
+ 1452 07ba BF90      		pop r11
+ 1453               	.LVL197:
+ 1454 07bc AF90      		pop r10
+ 1455               	.LVL198:
+ 1456 07be 9F90      		pop r9
+ 1457               	.LVL199:
+ 1458 07c0 0895      		ret
+ 1459               	.LFE10:
+ 1461               	.global	glcd_draw_rect_shadow
+ 1463               	glcd_draw_rect_shadow:
+ 1464               	.LFB14:
+ 1465               	.LM143:
+ 1466               	.LVL200:
+ 1467 07c2 CF92      		push r12
+ 1468 07c4 DF92      		push r13
+ 1469 07c6 EF92      		push r14
+ 1470 07c8 FF92      		push r15
+ 1471 07ca 0F93      		push r16
+ 1472               	.LVL201:
+ 1473 07cc 1F93      		push r17
+ 1474               	/* prologue: function */
+ 1475               	/* frame size = 0 */
+ 1476 07ce E82E      		mov r14,r24
+ 1477 07d0 D62E      		mov r13,r22
+ 1478 07d2 142F      		mov r17,r20
+ 1479 07d4 F22E      		mov r15,r18
+ 1480               	.LM144:
+ 1481 07d6 0E94 0000 		call glcd_draw_rect
+ 1482               	.LVL202:
+ 1483               	.LM145:
+ 1484 07da 1E0D      		add r17,r14
+ 1485               	.LVL203:
+ 1486 07dc FD0C      		add r15,r13
+ 1487               	.LVL204:
+ 1488 07de 8E2D      		mov r24,r14
+ 1489 07e0 8F5F      		subi r24,lo8(-(1))
+ 1490 07e2 6F2D      		mov r22,r15
+ 1491 07e4 412F      		mov r20,r17
+ 1492 07e6 2F2D      		mov r18,r15
+ 1493 07e8 0E94 0000 		call glcd_draw_line
+ 1494               	.LM146:
+ 1495 07ec D394      		inc r13
+ 1496 07ee 812F      		mov r24,r17
+ 1497 07f0 6D2D      		mov r22,r13
+ 1498 07f2 412F      		mov r20,r17
+ 1499 07f4 2F2D      		mov r18,r15
+ 1500 07f6 0E94 0000 		call glcd_draw_line
+ 1501               	/* epilogue start */
+ 1502               	.LM147:
+ 1503 07fa 1F91      		pop r17
+ 1504 07fc 0F91      		pop r16
+ 1505 07fe FF90      		pop r15
+ 1506 0800 EF90      		pop r14
+ 1507               	.LVL205:
+ 1508 0802 DF90      		pop r13
+ 1509               	.LVL206:
+ 1510 0804 CF90      		pop r12
+ 1511 0806 0895      		ret
+ 1512               	.LFE14:
+ 1626               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 graphics.c
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:2      *ABS*:0000003f __SREG__
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:3      *ABS*:0000003e __SP_H__
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:4      *ABS*:0000003d __SP_L__
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:5      *ABS*:00000034 __CCP__
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:18     .text:00000000 glcd_get_pixel
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:70     .text:00000046 glcd_draw_bitmap
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:94     .text:0000005e glcd_invert_pixel
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:153    .text:000000aa glcd_invert_area
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:231    .text:00000102 glcd_set_pixel
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:326    .text:00000180 glcd_fill_circle
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:586    .text:000002fe glcd_draw_circle
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:773    .text:0000041c glcd_draw_rect_thick
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:1009   .text:00000568 glcd_draw_rect
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:1159   .text:0000063a glcd_fill_rect
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:1297   .text:000006f0 glcd_draw_line
+C:\Users\lucas\AppData\Local\Temp/ccnCBcss.s:1463   .text:000007c2 glcd_draw_rect_shadow
+
+UNDEFINED SYMBOLS
+glcd_buffer
+glcd_buffer_selected
+memcpy_P
+glcd_bbox_refresh
+glcd_update_bbox

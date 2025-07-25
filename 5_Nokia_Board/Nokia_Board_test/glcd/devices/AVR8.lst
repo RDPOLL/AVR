@@ -1,0 +1,126 @@
+   1               		.file	"AVR8.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	glcd_spi_write
+  18               	glcd_spi_write:
+  19               	.LFB7:
+  20               	.LM1:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LM2:
+  25 0000 2898      		cbi 37-32,0
+  26               	.LM3:
+  27 0002 8EBD      		out 78-32,r24
+  28               	.L2:
+  29               	.LM4:
+  30 0004 0DB4      		in __tmp_reg__,77-32
+  31 0006 07FE      		sbrs __tmp_reg__,7
+  32 0008 00C0      		rjmp .L2
+  33               	.LM5:
+  34 000a 289A      		sbi 37-32,0
+  35               	/* epilogue start */
+  36               	.LM6:
+  37 000c 0895      		ret
+  38               	.LFE7:
+  40               	.global	glcd_reset
+  42               	glcd_reset:
+  43               	.LFB8:
+  44               	.LM7:
+  45               	/* prologue: function */
+  46               	/* frame size = 0 */
+  47               	.LM8:
+  48 000e 2898      		cbi 37-32,0
+  49               	.LM9:
+  50 0010 5F98      		cbi 43-32,7
+  51               	.LBB12:
+  52               	.LBB13:
+  53               	.LBB14:
+  54               	.LBB15:
+  55               	.LM10:
+  56 0012 80EA      		ldi r24,lo8(4000)
+  57 0014 9FE0      		ldi r25,hi8(4000)
+  58               	.LVL1:
+  59               	/* #APP */
+  60               	 ;  105 "d:/coding/winavr/lib/gcc/../../avr/include/util/delay_basic.h" 1
+  61 0016 0197      		1: sbiw r24,1
+  62 0018 01F4      		brne 1b
+  63               	 ;  0 "" 2
+  64               	/* #NOAPP */
+  65               	.LBE15:
+  66               	.LBE14:
+  67               	.LBE13:
+  68               	.LBE12:
+  69               	.LM11:
+  70 001a 5F9A      		sbi 43-32,7
+  71               	.LM12:
+  72 001c 289A      		sbi 37-32,0
+  73               	/* epilogue start */
+  74               	.LM13:
+  75 001e 0895      		ret
+  76               	.LFE8:
+  78               	.global	glcd_init
+  80               	glcd_init:
+  81               	.LFB6:
+  82               	.LM14:
+  83               	/* prologue: function */
+  84               	/* frame size = 0 */
+  85               	.LM15:
+  86 0020 209A      		sbi 36-32,0
+  87               	.LM16:
+  88 0022 239A      		sbi 36-32,3
+  89               	.LM17:
+  90 0024 209A      		sbi 36-32,0
+  91               	.LM18:
+  92 0026 259A      		sbi 36-32,5
+  93               	.LM19:
+  94 0028 209A      		sbi 36-32,0
+  95               	.LM20:
+  96 002a 219A      		sbi 36-32,1
+  97               	.LM21:
+  98 002c 579A      		sbi 42-32,7
+  99               	.LM22:
+ 100 002e 289A      		sbi 37-32,0
+ 101               	.LM23:
+ 102 0030 80E5      		ldi r24,lo8(80)
+ 103 0032 8CBD      		out 76-32,r24
+ 104               	.LM24:
+ 105 0034 1DBC      		out 77-32,__zero_reg__
+ 106               	.LM25:
+ 107 0036 0E94 0000 		call glcd_PCD8544_init
+ 108               	.LM26:
+ 109 003a 80E0      		ldi r24,lo8(glcd_buffer)
+ 110 003c 90E0      		ldi r25,hi8(glcd_buffer)
+ 111 003e 60E0      		ldi r22,lo8(glcd_bbox)
+ 112 0040 70E0      		ldi r23,hi8(glcd_bbox)
+ 113 0042 0E94 0000 		call glcd_select_screen
+ 114               	.LM27:
+ 115 0046 0E94 0000 		call glcd_clear
+ 116               	/* epilogue start */
+ 117               	.LM28:
+ 118 004a 0895      		ret
+ 119               	.LFE6:
+ 161               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 AVR8.c
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:2      *ABS*:0000003f __SREG__
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:3      *ABS*:0000003e __SP_H__
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:4      *ABS*:0000003d __SP_L__
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:5      *ABS*:00000034 __CCP__
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:18     .text:00000000 glcd_spi_write
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:42     .text:0000000e glcd_reset
+C:\Users\lucas\AppData\Local\Temp/ccBkwAO0.s:80     .text:00000020 glcd_init
+
+UNDEFINED SYMBOLS
+glcd_PCD8544_init
+glcd_buffer
+glcd_bbox
+glcd_select_screen
+glcd_clear

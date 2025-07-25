@@ -1,0 +1,289 @@
+   1               		.file	"PCD8544.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	glcd_data
+  18               	glcd_data:
+  19               	.LFB7:
+  20               	.LM1:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LM2:
+  25 0000 299A      		sbi 37-32,1
+  26               	.LM3:
+  27 0002 0E94 0000 		call glcd_spi_write
+  28               	.LVL1:
+  29               	/* epilogue start */
+  30               	.LM4:
+  31 0006 0895      		ret
+  32               	.LFE7:
+  34               	.global	glcd_command
+  36               	glcd_command:
+  37               	.LFB6:
+  38               	.LM5:
+  39               	.LVL2:
+  40               	/* prologue: function */
+  41               	/* frame size = 0 */
+  42               	.LM6:
+  43 0008 2998      		cbi 37-32,1
+  44               	.LM7:
+  45 000a 0E94 0000 		call glcd_spi_write
+  46               	.LVL3:
+  47               	/* epilogue start */
+  48               	.LM8:
+  49 000e 0895      		ret
+  50               	.LFE6:
+  52               	.global	glcd_PCD8544_init
+  54               	glcd_PCD8544_init:
+  55               	.LFB14:
+  56               	.LM9:
+  57               	/* prologue: function */
+  58               	/* frame size = 0 */
+  59               	.LM10:
+  60 0010 0E94 0000 		call glcd_reset
+  61               	.LM11:
+  62 0014 81E2      		ldi r24,lo8(33)
+  63 0016 0E94 0000 		call glcd_command
+  64               	.LM12:
+  65 001a 82E1      		ldi r24,lo8(18)
+  66 001c 0E94 0000 		call glcd_command
+  67               	.LM13:
+  68 0020 8CEB      		ldi r24,lo8(-68)
+  69 0022 0E94 0000 		call glcd_command
+  70               	.LM14:
+  71 0026 80E2      		ldi r24,lo8(32)
+  72 0028 0E94 0000 		call glcd_command
+  73               	.LM15:
+  74 002c 8CE0      		ldi r24,lo8(12)
+  75 002e 0E94 0000 		call glcd_command
+  76               	/* epilogue start */
+  77               	.LM16:
+  78 0032 0895      		ret
+  79               	.LFE14:
+  81               	.global	glcd_write
+  83               	glcd_write:
+  84               	.LFB13:
+  85               	.LM17:
+  86 0034 EF92      		push r14
+  87 0036 FF92      		push r15
+  88 0038 0F93      		push r16
+  89 003a 1F93      		push r17
+  90 003c CF93      		push r28
+  91 003e DF93      		push r29
+  92               	/* prologue: function */
+  93               	/* frame size = 0 */
+  94               	.LM18:
+  95 0040 00E0      		ldi r16,lo8(0)
+  96               	.LVL4:
+  97 0042 20E0      		ldi r18,lo8(0)
+  98 0044 30E0      		ldi r19,hi8(0)
+  99 0046 C0E0      		ldi r28,lo8(0)
+ 100 0048 D0E0      		ldi r29,hi8(0)
+ 101               	.LVL5:
+ 102               	.L12:
+ 103               	.LBB2:
+ 104               	.LM19:
+ 105 004a E091 0000 		lds r30,glcd_bbox_selected
+ 106 004e F091 0000 		lds r31,(glcd_bbox_selected)+1
+ 107               	.LM20:
+ 108 0052 88E0      		ldi r24,lo8(8)
+ 109 0054 E82E      		mov r14,r24
+ 110 0056 F12C      		mov r15,__zero_reg__
+ 111 0058 E20E      		add r14,r18
+ 112 005a F31E      		adc r15,r19
+ 113               	.LM21:
+ 114 005c 8181      		ldd r24,Z+1
+ 115 005e 90E0      		ldi r25,lo8(0)
+ 116 0060 8E15      		cp r24,r14
+ 117 0062 9F05      		cpc r25,r15
+ 118 0064 04F4      		brge .L8
+ 119               	.LM22:
+ 120 0066 8381      		ldd r24,Z+3
+ 121 0068 90E0      		ldi r25,lo8(0)
+ 122 006a 8217      		cp r24,r18
+ 123 006c 9307      		cpc r25,r19
+ 124 006e 04F0      		brlt .L9
+ 125               	.LM23:
+ 126 0070 802F      		mov r24,r16
+ 127 0072 8064      		ori r24,lo8(64)
+ 128 0074 0E94 0000 		call glcd_command
+ 129               	.LM24:
+ 130 0078 E091 0000 		lds r30,glcd_bbox_selected
+ 131 007c F091 0000 		lds r31,(glcd_bbox_selected)+1
+ 132 0080 8081      		ld r24,Z
+ 133 0082 8068      		ori r24,lo8(-128)
+ 134 0084 0E94 0000 		call glcd_command
+ 135               	.LM25:
+ 136 0088 E091 0000 		lds r30,glcd_bbox_selected
+ 137 008c F091 0000 		lds r31,(glcd_bbox_selected)+1
+ 138 0090 1081      		ld r17,Z
+ 139 0092 00C0      		rjmp .L10
+ 140               	.L11:
+ 141               	.LM26:
+ 142 0094 E091 0000 		lds r30,glcd_buffer_selected
+ 143 0098 F091 0000 		lds r31,(glcd_buffer_selected)+1
+ 144 009c EC0F      		add r30,r28
+ 145 009e FD1F      		adc r31,r29
+ 146 00a0 E10F      		add r30,r17
+ 147 00a2 F11D      		adc r31,__zero_reg__
+ 148 00a4 8081      		ld r24,Z
+ 149 00a6 0E94 0000 		call glcd_data
+ 150               	.LM27:
+ 151 00aa 1F5F      		subi r17,lo8(-(1))
+ 152               	.L10:
+ 153 00ac E091 0000 		lds r30,glcd_bbox_selected
+ 154 00b0 F091 0000 		lds r31,(glcd_bbox_selected)+1
+ 155 00b4 8281      		ldd r24,Z+2
+ 156 00b6 8117      		cp r24,r17
+ 157 00b8 00F4      		brsh .L11
+ 158               	.L8:
+ 159               	.LBE2:
+ 160               	.LM28:
+ 161 00ba 0F5F      		subi r16,lo8(-(1))
+ 162 00bc CC5A      		subi r28,lo8(-(84))
+ 163 00be DF4F      		sbci r29,hi8(-(84))
+ 164 00c0 0630      		cpi r16,lo8(6)
+ 165 00c2 01F0      		breq .L9
+ 166 00c4 9701      		movw r18,r14
+ 167 00c6 00C0      		rjmp .L12
+ 168               	.L9:
+ 169               	.LM29:
+ 170 00c8 0E94 0000 		call glcd_reset_bbox
+ 171               	/* epilogue start */
+ 172               	.LM30:
+ 173 00cc DF91      		pop r29
+ 174 00ce CF91      		pop r28
+ 175 00d0 1F91      		pop r17
+ 176               	.LVL6:
+ 177 00d2 0F91      		pop r16
+ 178               	.LVL7:
+ 179 00d4 FF90      		pop r15
+ 180 00d6 EF90      		pop r14
+ 181 00d8 0895      		ret
+ 182               	.LFE13:
+ 184               	.global	glcd_set_x_address
+ 186               	glcd_set_x_address:
+ 187               	.LFB12:
+ 188               	.LM31:
+ 189               	.LVL8:
+ 190               	/* prologue: function */
+ 191               	/* frame size = 0 */
+ 192               	.LM32:
+ 193 00da 8068      		ori r24,lo8(-128)
+ 194               	.LVL9:
+ 195 00dc 0E94 0000 		call glcd_command
+ 196               	/* epilogue start */
+ 197               	.LM33:
+ 198 00e0 0895      		ret
+ 199               	.LFE12:
+ 201               	.global	glcd_set_y_address
+ 203               	glcd_set_y_address:
+ 204               	.LFB11:
+ 205               	.LM34:
+ 206               	.LVL10:
+ 207               	/* prologue: function */
+ 208               	/* frame size = 0 */
+ 209               	.LM35:
+ 210 00e2 8630      		cpi r24,lo8(6)
+ 211 00e4 00F0      		brlo .L17
+ 212 00e6 85E4      		ldi r24,lo8(69)
+ 213               	.LVL11:
+ 214 00e8 00C0      		rjmp .L18
+ 215               	.LVL12:
+ 216               	.L17:
+ 217 00ea 8064      		ori r24,lo8(64)
+ 218               	.LVL13:
+ 219               	.L18:
+ 220 00ec 0E94 0000 		call glcd_command
+ 221               	/* epilogue start */
+ 222               	.LM36:
+ 223 00f0 0895      		ret
+ 224               	.LFE11:
+ 226               	.global	glcd_power_up
+ 228               	glcd_power_up:
+ 229               	.LFB10:
+ 230               	.LM37:
+ 231               	/* prologue: function */
+ 232               	/* frame size = 0 */
+ 233               	.LM38:
+ 234 00f2 80E2      		ldi r24,lo8(32)
+ 235 00f4 0E94 0000 		call glcd_command
+ 236               	/* epilogue start */
+ 237               	.LM39:
+ 238 00f8 0895      		ret
+ 239               	.LFE10:
+ 241               	.global	glcd_power_down
+ 243               	glcd_power_down:
+ 244               	.LFB9:
+ 245               	.LM40:
+ 246               	/* prologue: function */
+ 247               	/* frame size = 0 */
+ 248               	.LM41:
+ 249 00fa 0E94 0000 		call glcd_clear
+ 250               	.LM42:
+ 251 00fe 84E2      		ldi r24,lo8(36)
+ 252 0100 0E94 0000 		call glcd_command
+ 253               	/* epilogue start */
+ 254               	.LM43:
+ 255 0104 0895      		ret
+ 256               	.LFE9:
+ 258               	.global	glcd_set_contrast
+ 260               	glcd_set_contrast:
+ 261               	.LFB8:
+ 262               	.LM44:
+ 263               	.LVL14:
+ 264 0106 1F93      		push r17
+ 265               	/* prologue: function */
+ 266               	/* frame size = 0 */
+ 267 0108 182F      		mov r17,r24
+ 268               	.LM45:
+ 269 010a 81E2      		ldi r24,lo8(33)
+ 270               	.LVL15:
+ 271 010c 0E94 0000 		call glcd_command
+ 272               	.LM46:
+ 273 0110 812F      		mov r24,r17
+ 274 0112 8068      		ori r24,lo8(-128)
+ 275 0114 0E94 0000 		call glcd_command
+ 276               	.LM47:
+ 277 0118 80E2      		ldi r24,lo8(32)
+ 278 011a 0E94 0000 		call glcd_command
+ 279               	.LM48:
+ 280 011e 8CE0      		ldi r24,lo8(12)
+ 281 0120 0E94 0000 		call glcd_command
+ 282               	/* epilogue start */
+ 283               	.LM49:
+ 284 0124 1F91      		pop r17
+ 285               	.LVL16:
+ 286 0126 0895      		ret
+ 287               	.LFE8:
+ 377               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 PCD8544.c
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:2      *ABS*:0000003f __SREG__
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:3      *ABS*:0000003e __SP_H__
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:4      *ABS*:0000003d __SP_L__
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:5      *ABS*:00000034 __CCP__
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:18     .text:00000000 glcd_data
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:36     .text:00000008 glcd_command
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:54     .text:00000010 glcd_PCD8544_init
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:83     .text:00000034 glcd_write
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:186    .text:000000da glcd_set_x_address
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:203    .text:000000e2 glcd_set_y_address
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:228    .text:000000f2 glcd_power_up
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:243    .text:000000fa glcd_power_down
+C:\Users\lucas\AppData\Local\Temp/cca8ejAg.s:260    .text:00000106 glcd_set_contrast
+
+UNDEFINED SYMBOLS
+glcd_spi_write
+glcd_reset
+glcd_bbox_selected
+glcd_buffer_selected
+glcd_reset_bbox
+glcd_clear

@@ -1,0 +1,319 @@
+   1               		.file	"glcd.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	glcd_update_bbox
+  18               	glcd_update_bbox:
+  19               	.LFB7:
+  20               	.LM1:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LM2:
+  25 0000 982F      		mov r25,r24
+  26 0002 8435      		cpi r24,lo8(84)
+  27 0004 00F0      		brlo .L2
+  28 0006 93E5      		ldi r25,lo8(83)
+  29               	.LVL1:
+  30               	.L2:
+  31 0008 4435      		cpi r20,lo8(84)
+  32 000a 00F0      		brlo .L3
+  33 000c 43E5      		ldi r20,lo8(83)
+  34               	.LVL2:
+  35               	.L3:
+  36 000e 6033      		cpi r22,lo8(48)
+  37 0010 00F0      		brlo .L4
+  38 0012 6FE2      		ldi r22,lo8(47)
+  39               	.LVL3:
+  40               	.L4:
+  41 0014 2033      		cpi r18,lo8(48)
+  42 0016 00F0      		brlo .L5
+  43 0018 2FE2      		ldi r18,lo8(47)
+  44               	.LVL4:
+  45               	.L5:
+  46               	.LM3:
+  47 001a E091 0000 		lds r30,glcd_bbox_selected
+  48 001e F091 0000 		lds r31,(glcd_bbox_selected)+1
+  49 0022 8081      		ld r24,Z
+  50 0024 9817      		cp r25,r24
+  51 0026 00F4      		brsh .L6
+  52               	.LM4:
+  53 0028 9083      		st Z,r25
+  54               	.L6:
+  55               	.LM5:
+  56 002a 8281      		ldd r24,Z+2
+  57 002c 8417      		cp r24,r20
+  58 002e 00F4      		brsh .L7
+  59               	.LM6:
+  60 0030 4283      		std Z+2,r20
+  61               	.L7:
+  62               	.LM7:
+  63 0032 8181      		ldd r24,Z+1
+  64 0034 6817      		cp r22,r24
+  65 0036 00F4      		brsh .L8
+  66               	.LM8:
+  67 0038 6183      		std Z+1,r22
+  68               	.L8:
+  69               	.LM9:
+  70 003a 8381      		ldd r24,Z+3
+  71 003c 8217      		cp r24,r18
+  72 003e 00F4      		brsh .L10
+  73               	.LM10:
+  74 0040 2383      		std Z+3,r18
+  75               	.L10:
+  76 0042 0895      		ret
+  77               	.LFE7:
+  79               	.global	glcd_reset_bbox
+  81               	glcd_reset_bbox:
+  82               	.LFB8:
+  83               	.LM11:
+  84               	/* prologue: function */
+  85               	/* frame size = 0 */
+  86               	.LM12:
+  87 0044 E091 0000 		lds r30,glcd_bbox_selected
+  88 0048 F091 0000 		lds r31,(glcd_bbox_selected)+1
+  89 004c 83E5      		ldi r24,lo8(83)
+  90 004e 8083      		st Z,r24
+  91               	.LM13:
+  92 0050 1282      		std Z+2,__zero_reg__
+  93               	.LM14:
+  94 0052 8FE2      		ldi r24,lo8(47)
+  95 0054 8183      		std Z+1,r24
+  96               	.LM15:
+  97 0056 1382      		std Z+3,__zero_reg__
+  98               	/* epilogue start */
+  99               	.LM16:
+ 100 0058 0895      		ret
+ 101               	.LFE8:
+ 103               	.global	glcd_bbox_reset
+ 105               	glcd_bbox_reset:
+ 106               	.LFB9:
+ 107               	.LM17:
+ 108               	/* prologue: function */
+ 109               	/* frame size = 0 */
+ 110               	.LBB4:
+ 111               	.LBB5:
+ 112               	.LM18:
+ 113 005a E091 0000 		lds r30,glcd_bbox_selected
+ 114 005e F091 0000 		lds r31,(glcd_bbox_selected)+1
+ 115 0062 83E5      		ldi r24,lo8(83)
+ 116 0064 8083      		st Z,r24
+ 117               	.LM19:
+ 118 0066 1282      		std Z+2,__zero_reg__
+ 119               	.LM20:
+ 120 0068 8FE2      		ldi r24,lo8(47)
+ 121 006a 8183      		std Z+1,r24
+ 122               	.LM21:
+ 123 006c 1382      		std Z+3,__zero_reg__
+ 124               	/* epilogue start */
+ 125               	.LBE5:
+ 126               	.LBE4:
+ 127               	.LM22:
+ 128 006e 0895      		ret
+ 129               	.LFE9:
+ 131               	.global	glcd_bbox_refresh
+ 133               	glcd_bbox_refresh:
+ 134               	.LFB10:
+ 135               	.LM23:
+ 136               	/* prologue: function */
+ 137               	/* frame size = 0 */
+ 138               	.LM24:
+ 139 0070 E091 0000 		lds r30,glcd_bbox_selected
+ 140 0074 F091 0000 		lds r31,(glcd_bbox_selected)+1
+ 141 0078 1082      		st Z,__zero_reg__
+ 142               	.LM25:
+ 143 007a 83E5      		ldi r24,lo8(83)
+ 144 007c 8283      		std Z+2,r24
+ 145               	.LM26:
+ 146 007e 1182      		std Z+1,__zero_reg__
+ 147               	.LM27:
+ 148 0080 8FE2      		ldi r24,lo8(47)
+ 149 0082 8383      		std Z+3,r24
+ 150               	/* epilogue start */
+ 151               	.LM28:
+ 152 0084 0895      		ret
+ 153               	.LFE10:
+ 155               	.global	glcd_select_screen
+ 157               	glcd_select_screen:
+ 158               	.LFB13:
+ 159               	.LM29:
+ 160               	.LVL5:
+ 161               	/* prologue: function */
+ 162               	/* frame size = 0 */
+ 163               	.LM30:
+ 164 0086 9093 0000 		sts (glcd_buffer_selected)+1,r25
+ 165 008a 8093 0000 		sts glcd_buffer_selected,r24
+ 166               	.LM31:
+ 167 008e 7093 0000 		sts (glcd_bbox_selected)+1,r23
+ 168 0092 6093 0000 		sts glcd_bbox_selected,r22
+ 169               	/* epilogue start */
+ 170               	.LM32:
+ 171 0096 0895      		ret
+ 172               	.LFE13:
+ 174               	.global	glcd_scroll
+ 176               	glcd_scroll:
+ 177               	.LFB14:
+ 178               	.LM33:
+ 179               	.LVL6:
+ 180               	/* prologue: function */
+ 181               	/* frame size = 0 */
+ 182               	/* epilogue start */
+ 183               	.LM34:
+ 184 0098 0895      		ret
+ 185               	.LFE14:
+ 187               	.global	glcd_scroll_line
+ 189               	glcd_scroll_line:
+ 190               	.LFB15:
+ 191               	.LM35:
+ 192               	/* prologue: function */
+ 193               	/* frame size = 0 */
+ 194               	.LM36:
+ 195 009a 40E0      		ldi r20,lo8(0)
+ 196 009c 50E0      		ldi r21,hi8(0)
+ 197 009e 20E0      		ldi r18,lo8(0)
+ 198 00a0 30E0      		ldi r19,hi8(0)
+ 199               	.LM37:
+ 200 00a2 64E5      		ldi r22,lo8(84)
+ 201               	.L25:
+ 202 00a4 8091 0000 		lds r24,glcd_buffer_selected
+ 203 00a8 9091 0000 		lds r25,(glcd_buffer_selected)+1
+ 204               	.LM38:
+ 205 00ac 4530      		cpi r20,5
+ 206 00ae 5105      		cpc r21,__zero_reg__
+ 207 00b0 01F0      		breq .L22
+ 208               	.LM39:
+ 209 00b2 DC01      		movw r26,r24
+ 210 00b4 A20F      		add r26,r18
+ 211 00b6 B31F      		adc r27,r19
+ 212 00b8 2C5A      		subi r18,lo8(-(84))
+ 213 00ba 3F4F      		sbci r19,hi8(-(84))
+ 214 00bc FC01      		movw r30,r24
+ 215 00be E20F      		add r30,r18
+ 216 00c0 F31F      		adc r31,r19
+ 217 00c2 2455      		subi r18,lo8(-(-84))
+ 218 00c4 3040      		sbci r19,hi8(-(-84))
+ 219 00c6 84E5      		ldi r24,lo8(84)
+ 220               	.L23:
+ 221 00c8 0190      		ld r0,Z+
+ 222 00ca 0D92      		st X+,r0
+ 223 00cc 8150      		subi r24,lo8(-(-1))
+ 224 00ce 01F4      		brne .L23
+ 225 00d0 00C0      		rjmp .L24
+ 226               	.L22:
+ 227               	.LM40:
+ 228 00d2 8C55      		subi r24,lo8(-(420))
+ 229 00d4 9E4F      		sbci r25,hi8(-(420))
+ 230 00d6 DC01      		movw r26,r24
+ 231 00d8 862F      		mov r24,r22
+ 232 00da 1D92      		st X+,__zero_reg__
+ 233 00dc 8A95      	        dec r24
+ 234 00de 01F4      		brne .-6
+ 235               	.L24:
+ 236 00e0 4F5F      		subi r20,lo8(-(1))
+ 237 00e2 5F4F      		sbci r21,hi8(-(1))
+ 238 00e4 2C5A      		subi r18,lo8(-(84))
+ 239 00e6 3F4F      		sbci r19,hi8(-(84))
+ 240               	.LM41:
+ 241 00e8 4630      		cpi r20,6
+ 242 00ea 5105      		cpc r21,__zero_reg__
+ 243 00ec 01F4      		brne .L25
+ 244               	.LM42:
+ 245 00ee 80E0      		ldi r24,lo8(0)
+ 246 00f0 60E0      		ldi r22,lo8(0)
+ 247 00f2 43E5      		ldi r20,lo8(83)
+ 248 00f4 2FE2      		ldi r18,lo8(47)
+ 249 00f6 0E94 0000 		call glcd_update_bbox
+ 250               	/* epilogue start */
+ 251               	.LM43:
+ 252 00fa 0895      		ret
+ 253               	.LFE15:
+ 255               	.global	glcd_clear_buffer
+ 257               	glcd_clear_buffer:
+ 258               	.LFB12:
+ 259               	.LM44:
+ 260               	/* prologue: function */
+ 261               	/* frame size = 0 */
+ 262               	.LM45:
+ 263 00fc E091 0000 		lds r30,glcd_buffer_selected
+ 264 0100 F091 0000 		lds r31,glcd_buffer_selected+1
+ 265 0104 88EF      		ldi r24,lo8(504)
+ 266 0106 91E0      		ldi r25,hi8(504)
+ 267 0108 DF01      		movw r26,r30
+ 268 010a 9C01      		movw r18,r24
+ 269 010c 1D92      		st X+,__zero_reg__
+ 270 010e 2150      		subi r18,1
+ 271 0110 3040      		sbci r19,0
+ 272 0112 01F4      		brne .-8
+ 273               	.LM46:
+ 274 0114 80E0      		ldi r24,lo8(0)
+ 275 0116 60E0      		ldi r22,lo8(0)
+ 276 0118 43E5      		ldi r20,lo8(83)
+ 277 011a 2FE2      		ldi r18,lo8(47)
+ 278 011c 0E94 0000 		call glcd_update_bbox
+ 279               	/* epilogue start */
+ 280               	.LM47:
+ 281 0120 0895      		ret
+ 282               	.LFE12:
+ 284               	.global	glcd_clear
+ 286               	glcd_clear:
+ 287               	.LFB11:
+ 288               	.LM48:
+ 289               	/* prologue: function */
+ 290               	/* frame size = 0 */
+ 291               	.LM49:
+ 292 0122 E091 0000 		lds r30,glcd_buffer_selected
+ 293 0126 F091 0000 		lds r31,glcd_buffer_selected+1
+ 294 012a 88EF      		ldi r24,lo8(504)
+ 295 012c 91E0      		ldi r25,hi8(504)
+ 296 012e DF01      		movw r26,r30
+ 297 0130 9C01      		movw r18,r24
+ 298 0132 1D92      		st X+,__zero_reg__
+ 299 0134 2150      		subi r18,1
+ 300 0136 3040      		sbci r19,0
+ 301 0138 01F4      		brne .-8
+ 302               	.LM50:
+ 303 013a 80E0      		ldi r24,lo8(0)
+ 304 013c 60E0      		ldi r22,lo8(0)
+ 305 013e 43E5      		ldi r20,lo8(83)
+ 306 0140 2FE2      		ldi r18,lo8(47)
+ 307 0142 0E94 0000 		call glcd_update_bbox
+ 308               	.LM51:
+ 309 0146 0E94 0000 		call glcd_write
+ 310               	/* epilogue start */
+ 311               	.LM52:
+ 312 014a 0895      		ret
+ 313               	.LFE11:
+ 315               		.comm glcd_buffer,504,1
+ 316               		.comm glcd_bbox,4,1
+ 317               		.comm glcd_buffer_selected,2,1
+ 318               		.comm glcd_bbox_selected,2,1
+ 407               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 glcd.c
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:2      *ABS*:0000003f __SREG__
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:3      *ABS*:0000003e __SP_H__
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:4      *ABS*:0000003d __SP_L__
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:5      *ABS*:00000034 __CCP__
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:18     .text:00000000 glcd_update_bbox
+                            *COM*:00000002 glcd_bbox_selected
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:81     .text:00000044 glcd_reset_bbox
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:105    .text:0000005a glcd_bbox_reset
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:133    .text:00000070 glcd_bbox_refresh
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:157    .text:00000086 glcd_select_screen
+                            *COM*:00000002 glcd_buffer_selected
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:176    .text:00000098 glcd_scroll
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:189    .text:0000009a glcd_scroll_line
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:257    .text:000000fc glcd_clear_buffer
+C:\Users\lucas\AppData\Local\Temp/ccrR1IoE.s:286    .text:00000122 glcd_clear
+                            *COM*:000001f8 glcd_buffer
+                            *COM*:00000004 glcd_bbox
+
+UNDEFINED SYMBOLS
+glcd_write
+__do_clear_bss
